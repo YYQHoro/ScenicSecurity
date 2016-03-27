@@ -75,10 +75,6 @@ namespace Serial
             }
         }
 
-
-        
-        
-
         public static DataTable ReadDataByColumns(string mdbPath, string tableName, string[] columns, ref bool success)
         {
             DataTable dt = new DataTable();
@@ -244,5 +240,8 @@ namespace Serial
             catch { return false; }
         }
         */
+
+
+
     }
 }
