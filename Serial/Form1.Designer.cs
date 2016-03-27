@@ -29,19 +29,21 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.btn_connect = new System.Windows.Forms.Button();
             this.btn_disconnect = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.RecvText = new System.Windows.Forms.TextBox();
             this.btn_send = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.btn_readAccess = new System.Windows.Forms.Button();
+            this.btn_getCurRow = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -78,12 +80,12 @@
             this.textBox1.Size = new System.Drawing.Size(100, 21);
             this.textBox1.TabIndex = 2;
             // 
-            // textBox2
+            // RecvText
             // 
-            this.textBox2.Location = new System.Drawing.Point(272, 12);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(100, 21);
-            this.textBox2.TabIndex = 3;
+            this.RecvText.Location = new System.Drawing.Point(272, 12);
+            this.RecvText.Name = "RecvText";
+            this.RecvText.Size = new System.Drawing.Size(100, 21);
+            this.RecvText.TabIndex = 3;
             // 
             // btn_send
             // 
@@ -107,17 +109,17 @@
             // 
             // chart1
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(12, 150);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.CustomProperties = "EmptyPointValue=Zero";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chart1.Series.Add(series2);
+            series1.ChartArea = "ChartArea1";
+            series1.CustomProperties = "EmptyPointValue=Zero";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(393, 300);
             this.chart1.TabIndex = 6;
             this.chart1.Text = "chart1";
@@ -131,16 +133,38 @@
             this.dataGridView1.Size = new System.Drawing.Size(355, 299);
             this.dataGridView1.TabIndex = 7;
             // 
+            // btn_readAccess
+            // 
+            this.btn_readAccess.Location = new System.Drawing.Point(306, 119);
+            this.btn_readAccess.Name = "btn_readAccess";
+            this.btn_readAccess.Size = new System.Drawing.Size(75, 23);
+            this.btn_readAccess.TabIndex = 8;
+            this.btn_readAccess.Text = "读取数据库";
+            this.btn_readAccess.UseVisualStyleBackColor = true;
+            this.btn_readAccess.Click += new System.EventHandler(this.btn_readAccess_Click);
+            // 
+            // btn_getCurRow
+            // 
+            this.btn_getCurRow.Location = new System.Drawing.Point(411, 119);
+            this.btn_getCurRow.Name = "btn_getCurRow";
+            this.btn_getCurRow.Size = new System.Drawing.Size(75, 23);
+            this.btn_getCurRow.TabIndex = 9;
+            this.btn_getCurRow.Text = "读取当前行";
+            this.btn_getCurRow.UseVisualStyleBackColor = true;
+            this.btn_getCurRow.Click += new System.EventHandler(this.btn_getCurRow_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(778, 493);
+            this.Controls.Add(this.btn_getCurRow);
+            this.Controls.Add(this.btn_readAccess);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btn_send);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.RecvText);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.btn_disconnect);
             this.Controls.Add(this.btn_connect);
@@ -160,12 +184,14 @@
         private System.Windows.Forms.Button btn_connect;
         private System.Windows.Forms.Button btn_disconnect;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox RecvText;
         private System.Windows.Forms.Button btn_send;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.BindingSource bindingSource1;
+        private System.Windows.Forms.Button btn_readAccess;
+        private System.Windows.Forms.Button btn_getCurRow;
     }
 }
 

@@ -16,7 +16,7 @@ namespace Serial
     public partial class Form1 : Form
     {
         const String mdbPath = "F:\\VSproject\\Serial\\yyq.mdb";
-
+        const String tableName = "table1";
         //连接字符串,用来连接Database数据库;
         //如果没有密码请去掉JET OLEDB:Database Password=***;
         public static string connString = @"
@@ -25,7 +25,8 @@ namespace Serial
             ;
 
         //SQL查询语句,用来从Database数据库tblMat表中获取所有数据;
-        private string sqlString = "SELECT * from table1";
+        private string sqlString = "SELECT * from " + tableName;
+
         //dataadapter,使数据库的表和内存中的表datatable通讯
         private OleDbDataAdapter da;
         //bindingsource,使内存中的表datatable与窗体的显示控件datagridview通讯
@@ -43,7 +44,7 @@ namespace Serial
 
         private void btn_connect_Click(object sender, EventArgs e)
         {
-            interfaceUpdataHandle = new HandleInterfaceUpdataDelegate(UpdateTextBox);
+            interfaceUpdataHandle = new HandleInterfaceUpdataDelegate(UpdateRecvText);
 
             serialPort1.Open();
         }
@@ -79,7 +80,6 @@ namespace Serial
             }
         }
 
-
         /// <summary>
         /// 从dataGridView中更新数据到Access
         /// </summary>
@@ -99,8 +99,6 @@ namespace Serial
         /// </summary>
         private void dataUpdataChart()
         {
-
-
             //chart1.Series.Clear();
             chart1.Series[0].Points.DataBind(dt.AsEnumerable(), "name", "age", "");
 
@@ -114,25 +112,21 @@ namespace Serial
         private void btn_disconnect_Click(object sender, EventArgs e)
         {
             //serialPort1.Close();
-            DataBind();
+           
+            //Console.WriteLine( dataGridView1.CurrentCell.Value);
+
+            
+            
         }
 
         private void btn_send_Click(object sender, EventArgs e)
         {
-            // serialPort1.WriteLine(textBox1.Text);
+            serialPort1.WriteLine(textBox1.Text);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Boolean isSuccess = false;
-            //DataBase.ReadAllData(mdbPath, "table1", ref isSuccess);//读入数据
-            
-            String[] fields = { "name","age" };
-            String[] values = { "yyq1","1"};
-
             dataUpdataChart();
-
-            Console.WriteLine(isSuccess );
         }
 
         private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -143,10 +137,29 @@ namespace Serial
 
             this.Invoke(interfaceUpdataHandle, Encoding.UTF8.GetString(readBuffer));
         }
-        private void UpdateTextBox(string text)
+
+        private void UpdateRecvText(string text)
         {
-            textBox2.Text = text;
+            RecvText.Text = text;
         }
 
+        private void btn_readAccess_Click(object sender, EventArgs e)
+        {
+            DataBind();
+            dataUpdataChart();
+        }
+
+        private void btn_getCurRow_Click(object sender, EventArgs e)
+        {
+            if(dataGridView1.CurrentRow==null)
+            {
+                Console.WriteLine("行未选择。");
+                return;
+            }
+                
+            Console.WriteLine(dataGridView1.CurrentRow.Cells[0].Value);
+            Console.WriteLine(dataGridView1.CurrentRow.Cells[1].Value);
+            Console.WriteLine(dataGridView1.CurrentRow.Cells[2].Value);
+        }
     }
 }
