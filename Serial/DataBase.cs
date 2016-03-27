@@ -75,12 +75,17 @@ namespace Serial
             }
         }
 
+
+        
+        
+
         public static DataTable ReadDataByColumns(string mdbPath, string tableName, string[] columns, ref bool success)
         {
             DataTable dt = new DataTable();
+
             try
             {
-                DataRow dr;
+                
                 //1、建立连接    
                 string strConn
                     = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdbPath + ";Jet OLEDB:Database Password=haoren";
@@ -89,6 +94,7 @@ namespace Serial
                 odcConnection.Open();
                 //建立SQL查询    
                 OleDbCommand odCommand = odcConnection.CreateCommand();
+
                 //3、输入查询语句    
                 string strColumn = "";
                 for (int i = 0; i < columns.Length; i++)
@@ -97,9 +103,13 @@ namespace Serial
                 }
                 strColumn = strColumn.TrimEnd(',');
                 odCommand.CommandText = "select " + strColumn + " from " + tableName;
-                //建立读取    
+
+                //建立读取
                 OleDbDataReader odrReader = odCommand.ExecuteReader();
-                //查询并显示数据    
+                
+                //查询并显示数据
+
+                //添加列标题
                 int size = odrReader.FieldCount;
                 for (int i = 0; i < size; i++)
                 {
@@ -108,15 +118,18 @@ namespace Serial
                     dt.Columns.Add(dc);
                 }
 
+                DataRow dr;
                 while (odrReader.Read())
                 {
                     dr = dt.NewRow();
+                    //为当前行填充各列的数据
                     for (int i = 0; i < size; i++)
                     {
                         dr[odrReader.GetName(i)] = odrReader[odrReader.GetName(i)].ToString();
                     }
                     dt.Rows.Add(dr);
                 }
+
                 //关闭连接    
                 odrReader.Close();
                 odcConnection.Close();
@@ -129,14 +142,19 @@ namespace Serial
                 return dt;
             }
         }
-        public static Boolean WriteDataByColumns(string mdbPath, string tableName, string[] values)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="mdbPath"></param>
+        /// <param name="tableName">表名</param>
+        /// <param name="fields">列名</param>
+        /// <param name="values">值</param>
+        /// <returns></returns>
+        public static Boolean WriteDataByColumns(string mdbPath, string tableName,string[] fields,string[] values)
         {
-            DataTable dt = new DataTable();
             Boolean result = false;
-
             try
             {
-                DataRow dr;
                 //1、建立连接    
                 string strConn
                     = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdbPath + ";Jet OLEDB:Database Password=haoren";
@@ -145,60 +163,35 @@ namespace Serial
                 odcConnection.Open();
                 //建立SQL查询    
                 OleDbCommand odCommand = odcConnection.CreateCommand();
-                //3、输入查询语句    
+                //3、输入查询语句  
+                string strFields = "";
+                for (int i = 0; i < fields.Length; i++)
+                {
+                    if (i == fields.Length - 1)
+                        strFields +=   fields[i] ;
+                    else          
+                        strFields +=  fields[i] + ",";
+                }
                 string strValues = "";
                 for (int i = 0; i < values.Length; i++)
                 {
                     if (i == values.Length - 1)
-                        //     strValues += "'" + values[i].ToString() + "'";
-                        strValues += values[i] ;
+                        strValues += "'" + values[i] + "'";
                     else
-                        //     strValues += "'" + values[i].ToString() + "'" + ",";
-                        strValues +=  values[i]  + ",";
-
+                        strValues += "'" + values[i] + "'" + ",";
+                        
                 }
                 //同时插入一行中的多个字段时，每个字段的值用‘ 包起来
-                //odCommand.CommandText = "select " + strColumn + " from " + tableName;
-                //odCommand.CommandText = "insert into " + tableName + "(name) values(" + strValues + ");";
-                odCommand.CommandText = "insert into " + tableName + "(name) values('" + strValues + "');";
-                //建立读取    
-                //OleDbDataReader odrReader = odCommand.
-
+                odCommand.CommandText = "insert into " + tableName + "(" + strFields + ") values(" + strValues + ");";
                 odCommand.ExecuteNonQuery();
                 result = true;
-
-                /*
-                //查询并显示数据    
-                int size = odrReader.FieldCount;
-                for (int i = 0; i < size; i++)
-                {
-                    DataColumn dc;
-                    dc = new DataColumn(odrReader.GetName(i));
-                    dt.Columns.Add(dc);
-                }
-
-                while (odrReader.Read())
-                {
-                    dr = dt.NewRow();
-                    for (int i = 0; i < size; i++)
-                    {
-                        dr[odrReader.GetName(i)] = odrReader[odrReader.GetName(i)].ToString();
-                    }
-                    dt.Rows.Add(dr);
-                }
-                */
-                //关闭连接    
-                //odrReader.Close();
-
                 odcConnection.Close();
-
             }
             catch (Exception ex)
             {
                 result = false;
                 Console.WriteLine(ex.Message);
             }
-
             return result;
         }
         /*
