@@ -29,12 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.btn_connect = new System.Windows.Forms.Button();
-            this.btn_disconnect = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.RecvText = new System.Windows.Forms.TextBox();
             this.btn_send = new System.Windows.Forms.Button();
@@ -44,9 +43,31 @@
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.btn_readAccess = new System.Windows.Forms.Button();
             this.btn_getCurRow = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label_state_serial = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btn_m_ctl = new System.Windows.Forms.Button();
+            this.label_m_time = new System.Windows.Forms.Label();
+            this.timer_m = new System.Windows.Forms.Timer(this.components);
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label_comm_back = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // serialPort1
@@ -55,7 +76,7 @@
             // 
             // btn_connect
             // 
-            this.btn_connect.Location = new System.Drawing.Point(187, 34);
+            this.btn_connect.Location = new System.Drawing.Point(366, 13);
             this.btn_connect.Name = "btn_connect";
             this.btn_connect.Size = new System.Drawing.Size(75, 23);
             this.btn_connect.TabIndex = 0;
@@ -63,79 +84,68 @@
             this.btn_connect.UseVisualStyleBackColor = true;
             this.btn_connect.Click += new System.EventHandler(this.btn_connect_Click);
             // 
-            // btn_disconnect
-            // 
-            this.btn_disconnect.Location = new System.Drawing.Point(187, 63);
-            this.btn_disconnect.Name = "btn_disconnect";
-            this.btn_disconnect.Size = new System.Drawing.Size(75, 23);
-            this.btn_disconnect.TabIndex = 1;
-            this.btn_disconnect.Text = "断开串口";
-            this.btn_disconnect.UseVisualStyleBackColor = true;
-            this.btn_disconnect.Click += new System.EventHandler(this.btn_disconnect_Click);
-            // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(12, 12);
+            this.textBox1.Location = new System.Drawing.Point(447, 13);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 21);
+            this.textBox1.Size = new System.Drawing.Size(301, 21);
             this.textBox1.TabIndex = 2;
             // 
             // RecvText
             // 
-            this.RecvText.Location = new System.Drawing.Point(272, 12);
+            this.RecvText.Location = new System.Drawing.Point(366, 26);
             this.RecvText.Name = "RecvText";
             this.RecvText.Size = new System.Drawing.Size(100, 21);
             this.RecvText.TabIndex = 3;
             // 
             // btn_send
             // 
-            this.btn_send.Location = new System.Drawing.Point(187, 92);
+            this.btn_send.Location = new System.Drawing.Point(50, 62);
             this.btn_send.Name = "btn_send";
             this.btn_send.Size = new System.Drawing.Size(75, 23);
             this.btn_send.TabIndex = 4;
-            this.btn_send.Text = "发送数据";
+            this.btn_send.Text = "下达命令";
             this.btn_send.UseVisualStyleBackColor = true;
             this.btn_send.Click += new System.EventHandler(this.btn_send_Click);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(187, 121);
+            this.button1.Location = new System.Drawing.Point(285, 68);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 5;
             this.button1.Text = "更新图表";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // chart1
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
-            this.chart1.Location = new System.Drawing.Point(12, 150);
+            chartArea3.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chart1.Legends.Add(legend3);
+            this.chart1.Location = new System.Drawing.Point(165, 103);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.CustomProperties = "EmptyPointValue=Zero";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chart1.Series.Add(series2);
-            this.chart1.Size = new System.Drawing.Size(393, 300);
+            series3.ChartArea = "ChartArea1";
+            series3.CustomProperties = "EmptyPointValue=Zero";
+            series3.Legend = "Legend1";
+            series3.Name = "Series1";
+            this.chart1.Series.Add(series3);
+            this.chart1.Size = new System.Drawing.Size(210, 309);
             this.chart1.TabIndex = 6;
             this.chart1.Text = "chart1";
             // 
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(411, 151);
+            this.dataGridView1.Location = new System.Drawing.Point(381, 103);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(355, 299);
+            this.dataGridView1.Size = new System.Drawing.Size(181, 309);
             this.dataGridView1.TabIndex = 7;
             // 
             // btn_readAccess
             // 
-            this.btn_readAccess.Location = new System.Drawing.Point(306, 119);
+            this.btn_readAccess.Location = new System.Drawing.Point(479, 9);
             this.btn_readAccess.Name = "btn_readAccess";
             this.btn_readAccess.Size = new System.Drawing.Size(75, 23);
             this.btn_readAccess.TabIndex = 8;
@@ -145,7 +155,7 @@
             // 
             // btn_getCurRow
             // 
-            this.btn_getCurRow.Location = new System.Drawing.Point(411, 119);
+            this.btn_getCurRow.Location = new System.Drawing.Point(404, 68);
             this.btn_getCurRow.Name = "btn_getCurRow";
             this.btn_getCurRow.Size = new System.Drawing.Size(75, 23);
             this.btn_getCurRow.TabIndex = 9;
@@ -153,27 +163,205 @@
             this.btn_getCurRow.UseVisualStyleBackColor = true;
             this.btn_getCurRow.Click += new System.EventHandler(this.btn_getCurRow_Click);
             // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(70, 13);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(58, 20);
+            this.comboBox1.TabIndex = 10;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(11, 16);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 12);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "串口号：";
+            // 
+            // label_state_serial
+            // 
+            this.label_state_serial.AutoSize = true;
+            this.label_state_serial.Location = new System.Drawing.Point(134, 16);
+            this.label_state_serial.Name = "label_state_serial";
+            this.label_state_serial.Size = new System.Drawing.Size(101, 12);
+            this.label_state_serial.TabIndex = 12;
+            this.label_state_serial.Text = "串口状态：已断开";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label1);
+            this.groupBox1.Controls.Add(this.label_state_serial);
+            this.groupBox1.Controls.Add(this.comboBox1);
+            this.groupBox1.Controls.Add(this.btn_connect);
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Location = new System.Drawing.Point(12, 440);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(754, 41);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "串口配置";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.label2);
+            this.groupBox2.Location = new System.Drawing.Point(8, 9);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(151, 88);
+            this.groupBox2.TabIndex = 14;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "系统外壳状态";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("宋体", 42F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label2.ForeColor = System.Drawing.Color.Lime;
+            this.label2.Location = new System.Drawing.Point(9, 17);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(136, 56);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "安全";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.btn_m_ctl);
+            this.groupBox3.Controls.Add(this.label_m_time);
+            this.groupBox3.Location = new System.Drawing.Point(8, 103);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(151, 84);
+            this.groupBox3.TabIndex = 15;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "发动机运行时间";
+            // 
+            // btn_m_ctl
+            // 
+            this.btn_m_ctl.Location = new System.Drawing.Point(36, 54);
+            this.btn_m_ctl.Name = "btn_m_ctl";
+            this.btn_m_ctl.Size = new System.Drawing.Size(75, 23);
+            this.btn_m_ctl.TabIndex = 2;
+            this.btn_m_ctl.Text = "启动";
+            this.btn_m_ctl.UseVisualStyleBackColor = true;
+            this.btn_m_ctl.Click += new System.EventHandler(this.btn_m_ctl_Click);
+            // 
+            // label_m_time
+            // 
+            this.label_m_time.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_m_time.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.label_m_time.Location = new System.Drawing.Point(6, 17);
+            this.label_m_time.Name = "label_m_time";
+            this.label_m_time.Size = new System.Drawing.Size(139, 34);
+            this.label_m_time.TabIndex = 1;
+            this.label_m_time.Text = "0";
+            this.label_m_time.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // timer_m
+            // 
+            this.timer_m.Interval = 1000;
+            this.timer_m.Tick += new System.EventHandler(this.timer_m_Tick);
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.AllowUserToDeleteRows = false;
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Column1,
+            this.Column2});
+            this.dataGridView2.Location = new System.Drawing.Point(9, 127);
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.RowTemplate.Height = 23;
+            this.dataGridView2.Size = new System.Drawing.Size(158, 289);
+            this.dataGridView2.TabIndex = 16;
+            this.dataGridView2.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
+            this.dataGridView2.CurrentCellChanged += new System.EventHandler(this.dataGridView2_CurrentCellChanged);
+            // 
+            // Column1
+            // 
+            this.Column1.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column1.HeaderText = "命令";
+            this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
+            this.Column1.Width = 54;
+            // 
+            // Column2
+            // 
+            this.Column2.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.Column2.HeaderText = "值";
+            this.Column2.Name = "Column2";
+            this.Column2.Width = 42;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.label4);
+            this.groupBox4.Controls.Add(this.label_comm_back);
+            this.groupBox4.Controls.Add(this.label3);
+            this.groupBox4.Controls.Add(this.dataGridView2);
+            this.groupBox4.Controls.Add(this.btn_send);
+            this.groupBox4.Location = new System.Drawing.Point(587, 12);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(173, 422);
+            this.groupBox4.TabIndex = 17;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "控制命令";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(14, 20);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(89, 12);
+            this.label3.TabIndex = 17;
+            this.label3.Text = "待发送的命令：";
+            // 
+            // label_comm_back
+            // 
+            this.label_comm_back.AutoSize = true;
+            this.label_comm_back.Location = new System.Drawing.Point(60, 112);
+            this.label_comm_back.Name = "label_comm_back";
+            this.label_comm_back.Size = new System.Drawing.Size(53, 12);
+            this.label_comm_back.TabIndex = 18;
+            this.label_comm_back.Text = "执行成功";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(14, 91);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(65, 12);
+            this.label4.TabIndex = 19;
+            this.label4.Text = "命令反馈：";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(778, 493);
+            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btn_getCurRow);
             this.Controls.Add(this.btn_readAccess);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.chart1);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.btn_send);
             this.Controls.Add(this.RecvText);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.btn_disconnect);
-            this.Controls.Add(this.btn_connect);
             this.Name = "Form1";
             this.Text = "景区安全管理系统";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -183,7 +371,6 @@
 
         private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.Button btn_connect;
-        private System.Windows.Forms.Button btn_disconnect;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox RecvText;
         private System.Windows.Forms.Button btn_send;
@@ -193,6 +380,23 @@
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Button btn_readAccess;
         private System.Windows.Forms.Button btn_getCurRow;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label_state_serial;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.Button btn_m_ctl;
+        private System.Windows.Forms.Label label_m_time;
+        private System.Windows.Forms.Timer timer_m;
+        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label_comm_back;
+        private System.Windows.Forms.Label label4;
     }
 }
 
