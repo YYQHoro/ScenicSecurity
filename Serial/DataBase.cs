@@ -81,7 +81,6 @@ namespace Serial
 
             try
             {
-                
                 //1、建立连接    
                 string strConn
                     = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdbPath + ";Jet OLEDB:Database Password=haoren";

@@ -111,11 +111,8 @@ namespace Serial
 
         private void btn_disconnect_Click(object sender, EventArgs e)
         {
-            //serialPort1.Close();
-           
+            serialPort1.Close();
             //Console.WriteLine( dataGridView1.CurrentCell.Value);
-
-            
             
         }
 
@@ -160,6 +157,11 @@ namespace Serial
             Console.WriteLine(dataGridView1.CurrentRow.Cells[0].Value);
             Console.WriteLine(dataGridView1.CurrentRow.Cells[1].Value);
             Console.WriteLine(dataGridView1.CurrentRow.Cells[2].Value);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
