@@ -112,7 +112,7 @@ namespace Serial
                     comboBox3.Items.Add(ky.Key);
                 }
                 comboBox3.SelectedIndex = 0;
-                textBox3.Text = target[comboBox3.SelectedItem.ToString()];
+                textBox_number.Text = target[comboBox3.SelectedItem.ToString()];
             }
             
 
@@ -172,6 +172,8 @@ namespace Serial
                     Console.WriteLine(package[i]);
                 }
                 Console.WriteLine("Message_end");
+
+                recvMessage(message_from, message_date, message_time, message);
             }
             else if (package[0].StartsWith("+CMTI: \"SM\""))
             {
@@ -181,45 +183,34 @@ namespace Serial
             }
             else if(package[0].StartsWith("AT+CSCS=\"GSM\""))
             {
-                if(package[1]=="OK")
-                {
-                    btn_sendMessage_Click(null,null);
-                }
-                else
+                if(package[1]!="OK")
                 {
                     Console.Out.WriteLine("发送短信过程中出错：命令AT+CSCS=\"GSM\"不返回OK");
                     sendingMessage = -1;
-                }
+                }   
+                sendMessage(null,null);
             }
             else if (package[0].StartsWith("AT+CMGF=1"))
             {
-                if (package[1] == "OK")
-                {
-                    btn_sendMessage_Click(null, null);
-                }
-                else
+                if (package[1] != "OK")
                 {
                     Console.Out.WriteLine("发送短信过程中出错：命令AT+CMGF=1 不返回OK");
                     sendingMessage = -1;
                 }
+                sendMessage(null, null);
             }
             else if (package[0].StartsWith("AT+CMGS"))
             {
-                if (package[1].StartsWith(">"))
-                {
-                    btn_sendMessage_Click(null, null);
-                }
-                else
+                if (!package[1].StartsWith(">"))
                 {
                     Console.Out.WriteLine("发送短信过程中出错：命令AT+CMGS 不返回 > ");
                     sendingMessage = -1;
                 }
-
-                //+CMGS: 235
+                sendMessage(null, null);
             }
             else if (package[0].Equals("+CMGS: 50"))
             {
-               btn_sendMessage_Click(null, null);
+                sendMessage(null, null);
             }
             else
             {
@@ -235,16 +226,27 @@ RecvError:
                 }
                 Console.Out.WriteLine("\n---------------");
         }
-        private void btn_sendMessage_Click(object sender, EventArgs e)
+        private string message_number;
+        private string message_text;
+ 
+        public void recvMessage(string from,string date,string time,string text)
         {
-            if(serialPort1.IsOpen)
+            textBox_message_recv.Text += "来自:" + from + "\n日期:" + date + "\n时间:" + time + "\n内容:" + text + "\n----------\n";
+        }
+        public void sendMessage(String number,String text)
+        {
+            if (serialPort1.IsOpen)
             {
-                switch(sendingMessage)
+                switch (sendingMessage)
                 {
                     case 0:
+                        if (number == null || text == null)
+                            return;
+                        message_number = number;
+                        message_text = text;
                         btn_sendMessage.Enabled = false;
                         comboBox3.Enabled = false;
-                        textBox3.Enabled = false;
+                        textBox_number.Enabled = false;
                         btn_sendMessage.Text = "正在发送";
                         Console.Out.WriteLine("进入发短信第一阶段");
                         //进入发短信的第一阶段
@@ -260,26 +262,43 @@ RecvError:
                     case 2:
                         Console.Out.WriteLine("进入发短信第三阶段");
                         sendingMessage = 3;
-                        serialPort1.Write("AT+CMGS=\""+ textBox3.Text + "\""  + "\r\n");
+                        serialPort1.Write("AT+CMGS=\"" + message_number + "\"" + "\r\n");
                         break;
                     case 3:
                         Console.Out.WriteLine("进入发短信第四阶段");
                         sendingMessage = 4;
-                        serialPort1.Write(textBox4.Text);
+                        serialPort1.Write(message_text);
                         byte[] b = new byte[1];
                         b[0] = 0x1A;
                         serialPort1.Write(b, 0, 1);
                         break;
                     case 4:
-                    case -1:
+                        textBox_message_send.Text += "-----Message-----" + message_text + "\n-----sent-----\n";
                         Console.Out.WriteLine("短信发送完成.");
                         btn_sendMessage.Enabled = true;
                         comboBox3.Enabled = true;
-                        textBox3.Enabled = true;
+                        textBox_number.Enabled = true;
                         btn_sendMessage.Text = "发送短信";
+                        message_number = null;
+                        message_text = null;
+                        break;
+                    case -1:
+                        textBox_message_send.Text += "-----Message-----" + textBox_messageText.Text + "\n--sent-failed!-\n";
+                        Console.Out.WriteLine("短信发送失败.");
+                        MessageBox.Show("短信发送失败.", "错误");
+                        btn_sendMessage.Enabled = true;
+                        comboBox3.Enabled = true;
+                        textBox_number.Enabled = true;
+                        btn_sendMessage.Text = "发送短信";
+                        message_number = null;
+                        message_text = null; 
                         break;
                 }
             }
+        }
+        private void btn_sendMessage_Click(object sender, EventArgs e)
+        {
+            sendMessage(textBox_number.Text, textBox_messageText.Text);
         }
         private void changeSkinState(Boolean isSafe)
         {
@@ -388,7 +407,7 @@ RecvError:
         {
             if(serialPort1.IsOpen)
             {
-                String temp = textBox2.Text.ToString() + "\r\n";
+                String temp = textBox_command.Text.ToString() + "\r\n";
                 serialPort1.Write(temp.ToCharArray(), 0, temp.Length);
             }
             else
@@ -427,7 +446,7 @@ RecvError:
             }
             foreach (Byte b in buf)
             {
-                Console.Out.WriteLine(b);
+                //Console.Out.WriteLine(b);
                 recvBuf += Convert.ToChar(b);// == '\n' ? '@' : Convert.ToChar(b);
             }
         }
@@ -511,7 +530,7 @@ RecvError:
         {
             if(serialPort1.IsOpen)
             {
-                String temp = textBox2.Text + "\r\n";
+                String temp = textBox_command.Text + "\r\n";
                 serialPort1.Write(temp);
                 
             }
@@ -520,7 +539,7 @@ RecvError:
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            textBox3.Text = target[comboBox3.SelectedItem.ToString()];
+            textBox_number.Text = target[comboBox3.SelectedItem.ToString()];
         }
 
 
