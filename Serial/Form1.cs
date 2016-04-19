@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Threading;
+using System.Timers;
+
 namespace Serial
 {
     public partial class Form1 : Form
@@ -50,6 +52,13 @@ namespace Serial
 
         private DataTable dt = new DataTable();
 
+        Dictionary<String, String> target=new Dictionary<String, String>();
+
+        private static System.Timers.Timer timer_serial;
+
+        //是否正在发送短信
+        int sendingMessage = 0;
+
         public Form1()
         {
             InitializeComponent();
@@ -57,6 +66,7 @@ namespace Serial
         }
         private void Form1_Load(object sender, EventArgs e)
         {
+
             interfaceUpdataHandle = new HandleInterfaceUpdataDelegate(UpdateUI);
 
             //枚举本机串口号
@@ -65,7 +75,22 @@ namespace Serial
             {
                 comboBox1.Items.Add(name);
             }
-            comboBox1.SelectedIndex = 0;
+            //默认选中最后一个
+            comboBox1.SelectedIndex = comboBox1.Items.Count - 1;
+            
+            //枚举波特率
+            string[] baudrates =
+            {
+                "4800",
+                "9600",
+            };
+            foreach(string baud in baudrates)
+            {
+                comboBox2.Items.Add(baud);
+            }
+            //comboBox2.SelectedIndex = 0;
+            comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
+
 
             String[] CommandName =
             {
@@ -77,7 +102,32 @@ namespace Serial
                 int i= dataGridView2.Rows.Add();
                 dataGridView2.Rows[i].Cells[0].Value = name;
             }
+
+            //target.Add("一号机", "15177325008");
+            target.Add("一号机", "13377270802");
+            if (target.Count > 0)
+            {
+                foreach (KeyValuePair<string, string> ky in target)
+                {
+                    comboBox3.Items.Add(ky.Key);
+                }
+                comboBox3.SelectedIndex = 0;
+                textBox3.Text = target[comboBox3.SelectedItem.ToString()];
+            }
             
+
+            //不可用窗体里的定时器控件，因为对控件的操作比如定时器的启动和停止，需要在UI线程操作，在串口接收的函数里并不是UI线程，无法操作
+            timer_serial = new System.Timers.Timer(1000);
+
+            //注册计时器的事件
+            timer_serial.Elapsed += new ElapsedEventHandler(timer_serial_Tick);
+
+            //设置时间间隔为2秒（2000毫秒），覆盖构造函数设置的间隔
+            timer_serial.Interval = 1000;
+
+            //设置是执行一次（false）还是一直执行(true)，默认为true
+            timer_serial.AutoReset = false;
+
         }
         public delegate void HandleInterfaceUpdataDelegate(String str);
    
@@ -85,22 +135,152 @@ namespace Serial
 
         private void UpdateUI(String str)
         {
-            textBox1.Text = str;
-            if (str.EndsWith("OK"))
-            {
-                str=str.TrimEnd("OK".ToCharArray());
+            textBox1.Text = str + "-----------\n";
 
-                label_state_serial.Text = "串口状态：已连接";
-                changeSkinState(true);
-            }
-            
-            if (systemState==SystemState.Getting)
-            {
+            //将收到的串口信息以回车+换行符分隔，并丢弃空的项
+            String[] package = str.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            if (package.Length == 0)
+                return;
 
+            if (package[0].StartsWith("AT+CMGR="))
+            {
+                if (package.Last() != "OK")
+                    goto RecvError;
+
+                string message = "";
+                string message_date = "";
+                string message_time = "";
+                string message_from = "";
+                //包里是短信的内容
+                //package[1]为短信来源信息
+                //+CMGR: "REC READ","+8613377270802","","16/04/19,13:25:39+32"
+                string[] temp = package[1].Split(',');
+                //去除双引号后同时去除前面的+86
+                message_from = temp[1].Trim('"').Remove(0, 3);
+                message_date = temp[3].Trim('"');
+                //去除时间后面的+32
+                message_time = temp[4].Trim('"').Remove(temp[4].Length - 4);//.Trim("+32".ToCharArray());
+                Console.WriteLine("Message_received.");
+                Console.WriteLine("Message_from:" + message_from);
+                Console.WriteLine("Message_date:" + message_date);
+                Console.WriteLine("Message_time:" + message_time);
+                Console.WriteLine("Message_text:");
+                //接下来到最后一项OK之前都是短信的内容，通常只有一项，如果有多项，即短信内容里有换行符
+                for (int i = 2; i < package.Length - 1; i++)
+                {
+                    message += package[i] + "\n";
+                    Console.WriteLine(package[i]);
+                }
+                Console.WriteLine("Message_end");
             }
-            
+            else if (package[0].StartsWith("+CMTI: \"SM\""))
+            {
+                string index = package[0].Split(',')[1];
+                Console.WriteLine("有新短信到达.ID=" + index + "开始获取短信内容：");
+                serialPort1.Write("AT+CMGR=" + index + "\r\n");
+            }
+            else if(package[0].StartsWith("AT+CSCS=\"GSM\""))
+            {
+                if(package[1]=="OK")
+                {
+                    btn_sendMessage_Click(null,null);
+                }
+                else
+                {
+                    Console.Out.WriteLine("发送短信过程中出错：命令AT+CSCS=\"GSM\"不返回OK");
+                    sendingMessage = -1;
+                }
+            }
+            else if (package[0].StartsWith("AT+CMGF=1"))
+            {
+                if (package[1] == "OK")
+                {
+                    btn_sendMessage_Click(null, null);
+                }
+                else
+                {
+                    Console.Out.WriteLine("发送短信过程中出错：命令AT+CMGF=1 不返回OK");
+                    sendingMessage = -1;
+                }
+            }
+            else if (package[0].StartsWith("AT+CMGS"))
+            {
+                if (package[1].StartsWith(">"))
+                {
+                    btn_sendMessage_Click(null, null);
+                }
+                else
+                {
+                    Console.Out.WriteLine("发送短信过程中出错：命令AT+CMGS 不返回 > ");
+                    sendingMessage = -1;
+                }
+
+                //+CMGS: 235
+            }
+            else if (package[0].Equals("+CMGS: 50"))
+            {
+               btn_sendMessage_Click(null, null);
+            }
+            else
+            {
+                goto RecvError;
+            }
+            return;
+RecvError:
+                Console.Out.WriteLine("---------------");
+                Console.Out.WriteLine("收到一个结尾不为OK或者无法识别其类型的GSM数据包：");
+                foreach (String i in package)
+                {
+                    Console.Out.WriteLine(i);
+                }
+                Console.Out.WriteLine("\n---------------");
         }
-
+        private void btn_sendMessage_Click(object sender, EventArgs e)
+        {
+            if(serialPort1.IsOpen)
+            {
+                switch(sendingMessage)
+                {
+                    case 0:
+                        btn_sendMessage.Enabled = false;
+                        comboBox3.Enabled = false;
+                        textBox3.Enabled = false;
+                        btn_sendMessage.Text = "正在发送";
+                        Console.Out.WriteLine("进入发短信第一阶段");
+                        //进入发短信的第一阶段
+                        sendingMessage = 1;
+                        serialPort1.Write("AT+CSCS=\"GSM\"" + "\r\n");
+                        break;
+                    case 1:
+                        Console.Out.WriteLine("进入发短信第二阶段");
+                        //第二阶段，设置为文本模式
+                        sendingMessage = 2;
+                        serialPort1.Write("AT+CMGF=1" + "\r\n");
+                        break;
+                    case 2:
+                        Console.Out.WriteLine("进入发短信第三阶段");
+                        sendingMessage = 3;
+                        serialPort1.Write("AT+CMGS=\""+ textBox3.Text + "\""  + "\r\n");
+                        break;
+                    case 3:
+                        Console.Out.WriteLine("进入发短信第四阶段");
+                        sendingMessage = 4;
+                        serialPort1.Write(textBox4.Text);
+                        byte[] b = new byte[1];
+                        b[0] = 0x1A;
+                        serialPort1.Write(b, 0, 1);
+                        break;
+                    case 4:
+                    case -1:
+                        Console.Out.WriteLine("短信发送完成.");
+                        btn_sendMessage.Enabled = true;
+                        comboBox3.Enabled = true;
+                        textBox3.Enabled = true;
+                        btn_sendMessage.Text = "发送短信";
+                        break;
+                }
+            }
+        }
         private void changeSkinState(Boolean isSafe)
         {
             if(isSafe)
@@ -128,12 +308,14 @@ namespace Serial
                 }
                 else
                 {
+                    
+
                     serialPort1.PortName = comboBox1.SelectedItem.ToString();
                     serialPort1.Open();
                     label_state_serial.Text = "串口状态：已连接";
                     btn_connect.Text = "断开串口";
                    
-                    serial_getInfo();
+                    //serial_getInfo();
                 }
             }catch (Exception ex)
             {
@@ -206,11 +388,8 @@ namespace Serial
         {
             if(serialPort1.IsOpen)
             {
-                Encoding gb = Encoding.GetEncoding("gb2312");
-                byte[] bytes = gb.GetBytes("中文");
-                serialPort1.Write(bytes, 0, bytes.Length);
-
-                //serialPort1.WriteLine(textBox1.Text);
+                String temp = textBox2.Text.ToString() + "\r\n";
+                serialPort1.Write(temp.ToCharArray(), 0, temp.Length);
             }
             else
             {
@@ -218,30 +397,39 @@ namespace Serial
             }
 
         }
-
+        private String recvBuf="";
+        private Boolean isReceiving = false;
+        private void timer_serial_Tick(object sender, EventArgs e)
+        {
+            isReceiving = false;
+            Console.Out.WriteLine("串口数据接收完成");
+            this.BeginInvoke(interfaceUpdataHandle, recvBuf);
+            
+        }
         /// <summary>
         /// 串口接收处理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        
         private void serialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
+            byte[] buf = new byte[serialPort1.BytesToRead];
+            serialPort1.Read(buf, 0, buf.Length);
 
-            byte[] readBuffer = new byte[serialPort1.ReadBufferSize];
-            serialPort1.NewLine = "OK";
-            int i=serialPort1.Read(readBuffer, 0, readBuffer.Length);
-            Console.Out.WriteLine(i);
-
-            //String result = Encoding.UTF8.GetString(readBuffer).TrimEnd('\0');
-            String result = System.Text.Encoding.Default.GetString(readBuffer);
-            //if(result.EndsWith("OK"))
+            if (!isReceiving)
             {
-                
-                this.BeginInvoke(interfaceUpdataHandle, result);
-            }
+                isReceiving = true;
+                recvBuf = "";
 
-            
+                timer_serial.Enabled = true;
+
+                Console.Out.WriteLine("串口有新数据到达，开始接收");
+            }
+            foreach (Byte b in buf)
+            {
+                Console.Out.WriteLine(b);
+                recvBuf += Convert.ToChar(b);// == '\n' ? '@' : Convert.ToChar(b);
+            }
         }
         private void serial_getInfo()
         {
@@ -250,7 +438,6 @@ namespace Serial
 
             serialPort1.WriteLine("Hello world");
 
-           
         }
         
 
@@ -310,6 +497,8 @@ namespace Serial
         private void dataGridView2_CurrentCellChanged(object sender, EventArgs e)
         {
             label3.Text = "待发送的命令：" + dataGridView2.CurrentRow.Cells[0].Value+"\n附带的参数值："+ dataGridView2.CurrentRow.Cells[1].Value;
+            //serialPort1.WriteLine("AT");
+            
         }
 
         private void dataGridView2_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -317,5 +506,23 @@ namespace Serial
             Console.WriteLine(dataGridView2.CurrentRow.Cells[0].Value);
             Console.WriteLine(dataGridView2.CurrentRow.Cells[1].Value);
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if(serialPort1.IsOpen)
+            {
+                String temp = textBox2.Text + "\r\n";
+                serialPort1.Write(temp);
+                
+            }
+            
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            textBox3.Text = target[comboBox3.SelectedItem.ToString()];
+        }
+
+
     }
 }
