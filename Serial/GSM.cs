@@ -89,7 +89,7 @@ namespace Serial
                 string[] temp = package[1].Split(',');
                 //去除双引号后同时去除前面的+86
                 message_from = temp[1].Trim('"').Remove(0, 3);
-                message_date = temp[3].Trim('"');
+                message_date = "20"+temp[3].Trim('"');
                 //去除时间后面的+32
                 message_time = temp[4].Trim('"').Remove(temp[4].Length - 4);//.Trim("+32".ToCharArray());
                 Console.WriteLine("Message_received.");
@@ -103,6 +103,8 @@ namespace Serial
                     message += package[i] + "\n";
                     Console.WriteLine(package[i]);
                 }
+                //去除最后一个'\n'
+                message = message.Remove(message.Length - 1);
                 Console.WriteLine("Message_end");
 
                 String comb = message_from + "|" + message_date + "|" + message_time + "|" + message;

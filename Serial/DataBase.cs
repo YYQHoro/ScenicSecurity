@@ -179,6 +179,7 @@ namespace Serial
                 //同时插入一行中的多个字段时，每个字段的值用‘ 包起来
                 odCommand.CommandText = "insert into " + tableName + "(" + strFields + ") values(" + strValues + ");";
                 odCommand.ExecuteNonQuery();
+
                 result = true;
                 odcConnection.Close();
             }
@@ -186,6 +187,7 @@ namespace Serial
             {
                 result = false;
                 Console.WriteLine(ex.Message);
+             
             }
             return result;
         }

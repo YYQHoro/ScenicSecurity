@@ -21,8 +21,9 @@ namespace Serial
         private Boolean M_State=false;
         private DateTime M_Time;
 
-        const String mdbPath = "F:\\VSproject\\Serial\\yyq.mdb";
+        const String mdbPath = "database.mdb";
         const String tableName = "table1";
+        String[] columnsName;
         //连接字符串,用来连接Database数据库;
         //如果没有密码请去掉JET OLEDB:Database Password=***;
         public static string connString = @"
@@ -53,6 +54,7 @@ namespace Serial
         public Form1()
         {
             InitializeComponent();
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -90,8 +92,8 @@ namespace Serial
             };
             foreach(String name in CommandName)
             {
-                int i= dataGridView2.Rows.Add();
-                dataGridView2.Rows[i].Cells[0].Value = name;
+                int i= dataGridView_cmd.Rows.Add();
+                dataGridView_cmd.Rows[i].Cells[0].Value = name;
             }
             
             //target.Add("一号机", "15177325008");
@@ -118,6 +120,12 @@ namespace Serial
             //设置是执行一次（false）还是一直执行(true)，默认为true
             timer_serial.AutoReset = false;
 
+            //读取数据库
+            readAccess();
+
+            //不允许用户手动添加新行
+            dataGridView.AllowUserToAddRows = false;
+            
         }
 
         private void MessageProcess(Boolean isSend, String[] text)
@@ -130,7 +138,24 @@ namespace Serial
             else
             {
                 //处理收到短信 
+                /*
+                "来自:" + message[0] 
+                "日期:" + message[1] 
+                "时间:" + message[2] 
+                "内容:" + message[3]
+                */
+                String[] values=new String[columnsName.Length];
+   
+                values[0] = text[0];//来自
+                values[1] = text[3];//命令
+                values[2] = "0";//text[3];//值
+                values[3] = text[1];//日期
+                values[4] = text[2];//时间
+
+                DataBase.WriteDataByColumns(mdbPath, tableName, columnsName, values);
+                readAccess();
                 
+                //dataUpdate();
             }
         }
         public enum UpdateUIwhich
@@ -218,8 +243,6 @@ namespace Serial
                 }
                 else
                 {
-                    
-
                     serialPort1.PortName = comboBox1.SelectedItem.ToString();
                     serialPort1.Open();
                     label_state_serial.Text = "串口状态：已连接";
@@ -245,28 +268,35 @@ namespace Serial
         {
             using (OleDbConnection conn = new OleDbConnection(connString))
             {
-                da = new OleDbDataAdapter(sqlString, conn);
                 //新建datatable
+                da = new OleDbDataAdapter(sqlString, conn);
+
                 dt.Clear();
-                //DataTable dt = new DataTable();
+
                 //如果数据适配器填充内存表时,没有设置主键列,而access数据表有,那么设置主键;
                 //如果access数据表的主键是自动递增,那么设置内存表的主键也是自动递增.
                 da.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+
                 //填充内存表
                 da.Fill(dt);
-                //如果设置了MissingSchemaAction,下面语句可以省略;
-                //dt.PrimaryKey = new DataColumn[] { dt.Columns[0] };
-                //dt.Columns[0].AutoIncrement = true;
-                //dt.Columns[0].AutoIncrementSeed = 1;
-                //dt.Columns[0].AutoIncrementStep = 1;
 
+
+                //获取每列的标题名，从1开始跳过首列（ID主键列）
+                columnsName = new string[dt.Columns.Count-1];
+                for(int i=1;i<dt.Columns.Count;i++)
+                {
+                    columnsName[i-1] = dt.Columns[i].ColumnName;
+                    Console.Out.WriteLine(columnsName[i-1]);
+                }
+            
                 //新建bindingsource
                 bs = new BindingSource();
+
                 //bindingsource绑定内存表
                 bs.DataSource = dt;
                 
                 //datagridview绑定bindingsource
-                dataGridView1.DataSource = bs;
+                dataGridView.DataSource = bs;
             }
         }
 
@@ -289,13 +319,7 @@ namespace Serial
         /// </summary>
         private void dataUpdataChart()
         {
-            //chart1.Series.Clear();
-            chart1.Series[0].Points.DataBind(dt.AsEnumerable(), "name", "age", "");
-
-            //Series dataTableSeries1 = new Series("name-age");
-            //dataTableSeries1.Points.DataBind(dt.AsEnumerable(), "name", "age", "");
-            
-            //chart1.Series.Add(dataTableSeries1);
+            //chart1.Series[0].Points.DataBind(dt.AsEnumerable(), "name", "age", "");
         }
 
         private void addNewToData()
@@ -351,8 +375,7 @@ namespace Serial
                 recvBuf += Convert.ToChar(b);// == '\n' ? '@' : Convert.ToChar(b);
             }
         }
-
-        private void btn_readAccess_Click(object sender, EventArgs e)
+        private void readAccess()
         {
             DataBind();
             dataUpdataChart();
@@ -360,14 +383,14 @@ namespace Serial
 
         private void btn_getCurRow_Click(object sender, EventArgs e)
         {
-            if(dataGridView1.CurrentRow==null)
+            if(dataGridView.CurrentRow==null)
             {
                 Console.WriteLine("行未选择。");
                 return;
             }
-            Console.WriteLine(dataGridView1.CurrentRow.Cells[0].Value);
-            Console.WriteLine(dataGridView1.CurrentRow.Cells[1].Value);
-            Console.WriteLine(dataGridView1.CurrentRow.Cells[2].Value);
+            Console.WriteLine(dataGridView.CurrentRow.Cells[0].Value);
+            Console.WriteLine(dataGridView.CurrentRow.Cells[1].Value);
+            Console.WriteLine(dataGridView.CurrentRow.Cells[2].Value);
         }
 
         private void btn_m_ctl_Click(object sender, EventArgs e)
@@ -407,15 +430,15 @@ namespace Serial
 
         private void dataGridView2_CurrentCellChanged(object sender, EventArgs e)
         {
-            label3.Text = "待发送的命令：" + dataGridView2.CurrentRow.Cells[0].Value+"\n附带的参数值："+ dataGridView2.CurrentRow.Cells[1].Value;
+            label3.Text = "待发送的命令：" + dataGridView_cmd.CurrentRow.Cells[0].Value+"\n附带的参数值："+ dataGridView_cmd.CurrentRow.Cells[1].Value;
             
             
         }
 
         private void dataGridView2_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            Console.WriteLine(dataGridView2.CurrentRow.Cells[0].Value);
-            Console.WriteLine(dataGridView2.CurrentRow.Cells[1].Value);
+            Console.WriteLine(dataGridView_cmd.CurrentRow.Cells[0].Value);
+            Console.WriteLine(dataGridView_cmd.CurrentRow.Cells[1].Value);
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
@@ -423,6 +446,26 @@ namespace Serial
             textBox_number.Text = target[comboBox3.SelectedItem.ToString()];
         }
 
+        private void btn_savedata_Click(object sender, EventArgs e)
+        {
+            dataUpdate();
+            readAccess();
+            btn_savedata.Enabled = false;
+        }
 
+        private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            btn_savedata.Enabled = true;
+        }
+
+        private void btn_readAccess_Click(object sender, EventArgs e)
+        {
+            readAccess();
+        }
+
+        private void dataGridView_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            btn_savedata.Enabled = true;
+        }
     }
 }
