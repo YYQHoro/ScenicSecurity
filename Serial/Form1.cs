@@ -22,8 +22,14 @@ namespace Serial
         private DateTime M_Time;
 
         const String mdbPath = "database.mdb";
-        const String tableName = "table1";
-        String[] columnsName;
+        const String tableNameCmd = "cmd";
+        const String tableNameMotor = "motor";
+        const String tableNameAccount = "account";
+
+        String[] columnsNameCmd;
+        String[] columnsNameMotor;
+        String[] columnsNameAccount;
+
         //连接字符串,用来连接Database数据库;
         //如果没有密码请去掉JET OLEDB:Database Password=***;
         public static string connString = @"
@@ -31,7 +37,7 @@ namespace Serial
                 Data Source=" + mdbPath + ";"
             ;
         //SQL查询语句,用来从Database数据库tblMat表中获取所有数据;
-        private string sqlString = "SELECT * from " + tableName;
+        private string sqlString = "SELECT * from " + tableNameCmd;
 
         //dataadapter,使数据库的表和内存中的表datatable通讯
         private OleDbDataAdapter da;
@@ -54,7 +60,7 @@ namespace Serial
         public Form1()
         {
             InitializeComponent();
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView_c.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 
         }
         private void Form1_Load(object sender, EventArgs e)
@@ -124,8 +130,8 @@ namespace Serial
             readAccess();
 
             //不允许用户手动添加新行
-            dataGridView.AllowUserToAddRows = false;
             
+            dataGridView_c.AllowUserToAddRows = false;
         }
 
         private void MessageProcess(Boolean isSend, String[] text)
@@ -144,7 +150,7 @@ namespace Serial
                 "时间:" + message[2] 
                 "内容:" + message[3]
                 */
-                String[] values=new String[columnsName.Length];
+                String[] values=new String[columnsNameCmd.Length];
    
                 values[0] = text[0];//来自
                 values[1] = text[3];//命令
@@ -152,7 +158,7 @@ namespace Serial
                 values[3] = text[1];//日期
                 values[4] = text[2];//时间
 
-                DataBase.WriteDataByColumns(mdbPath, tableName, columnsName, values);
+                DataBase.WriteDataByColumns(mdbPath, tableNameCmd, columnsNameCmd, values);
                 readAccess();
                 
                 //dataUpdate();
@@ -282,11 +288,11 @@ namespace Serial
 
 
                 //获取每列的标题名，从1开始跳过首列（ID主键列）
-                columnsName = new string[dt.Columns.Count-1];
+                columnsNameCmd = new string[dt.Columns.Count-1];
                 for(int i=1;i<dt.Columns.Count;i++)
                 {
-                    columnsName[i-1] = dt.Columns[i].ColumnName;
-                    Console.Out.WriteLine(columnsName[i-1]);
+                    columnsNameCmd[i-1] = dt.Columns[i].ColumnName;
+                    Console.Out.WriteLine(columnsNameCmd[i-1]);
                 }
             
                 //新建bindingsource
@@ -296,7 +302,7 @@ namespace Serial
                 bs.DataSource = dt;
                 
                 //datagridview绑定bindingsource
-                dataGridView.DataSource = bs;
+                dataGridView_c.DataSource = bs;
             }
         }
 
@@ -383,14 +389,16 @@ namespace Serial
 
         private void btn_getCurRow_Click(object sender, EventArgs e)
         {
-            if(dataGridView.CurrentRow==null)
+            if(dataGridView_c.CurrentRow==null)
             {
                 Console.WriteLine("行未选择。");
                 return;
             }
-            Console.WriteLine(dataGridView.CurrentRow.Cells[0].Value);
-            Console.WriteLine(dataGridView.CurrentRow.Cells[1].Value);
-            Console.WriteLine(dataGridView.CurrentRow.Cells[2].Value);
+            /*
+            Console.WriteLine(dataGridView_c.CurrentRow.Cells[0].Value);
+            Console.WriteLine(dataGridView_c.CurrentRow.Cells[1].Value);
+            Console.WriteLine(dataGridView_c.CurrentRow.Cells[2].Value);
+            */
         }
 
         private void btn_m_ctl_Click(object sender, EventArgs e)
