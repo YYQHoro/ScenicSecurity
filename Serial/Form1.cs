@@ -27,22 +27,12 @@ namespace Serial
         const String tableNameDevice = "device";
         const String tableNameAccount = "account";
 
-        String[] columnsName;
-        //连接字符串,用来连接Database数据库;
-        //如果没有密码请去掉JET OLEDB:Database Password=***;
-        public static string connString = @"
-                Provider=Microsoft.Jet.OLEDB.4.0;
-                Data Source=" + mdbPath + ";"
-            ;
-        //SQL查询语句,用来从Database数据库tblMat表中获取所有数据;
-        private string sqlString = "SELECT * from " + tableNameCmd;
+        TableCmd tableCmd;
+        TableAccount tableAccount;
+        TablePrice tablePrice;
+        TableIncome tableIncome;
 
-        //dataadapter,使数据库的表和内存中的表datatable通讯
-        private OleDbDataAdapter da;
-        //bindingsource,使内存中的表datatable与窗体的显示控件datagridview通讯
-        private BindingSource bs;
-
-        private DataTable dt = new DataTable();
+        string tabCmdName, tabIncomeName, tabDeviceName, tabAccountName;
 
         //目标名和目标SIM号码的键值对表
         Dictionary<String, String> target=new Dictionary<String, String>();
@@ -124,12 +114,20 @@ namespace Serial
             //设置是执行一次（false）还是一直执行(true)，默认为true
             timer_serial.AutoReset = false;
 
-            //读取数据库
-            readAccess();
+            tableCmd = new TableCmd(mdbPath,tableNameCmd,dataGridView_c);
+            tableAccount = new TableAccount(mdbPath, tableNameAccount, dataGridView_a);
+            tableIncome = new TableIncome(mdbPath, tableNameIncome, dataGridView_i,chart1);
+            tablePrice = new TablePrice(mdbPath, tableNameDevice, dataGridView_d);
 
-            //不允许用户手动添加新行
-            dataGridView_c.AllowUserToAddRows = false;
-            
+            tablePrice.ReadFromAccess();
+            tableIncome.ReadFromAccess();
+            tableAccount.ReadFromAccess();
+            tableCmd.ReadFromAccess();
+
+            foreach (TabPage a in tabControl1.Controls)
+            {
+                
+            }
         }
 
         private void MessageProcess(Boolean isSend, String[] text)
@@ -148,17 +146,8 @@ namespace Serial
                 "时间:" + message[2] 
                 "内容:" + message[3]
                 */
-                String[] values=new String[columnsName.Length];
-   
-                values[0] = text[0];//来自
-                values[1] = text[3];//命令
-                values[2] = "0";//text[3];//值
-                values[3] = text[1];//日期
-                values[4] = text[2];//时间
-
-                DataBase.WriteDataByColumns(mdbPath, tableNameCmd, columnsName, values);
-                readAccess();
-                
+                tableCmd.addNew(text);
+                tableCmd.UpdateToAccess();
                 //dataUpdate();
             }
         }
@@ -265,66 +254,7 @@ namespace Serial
             }
         }
 
-        /// <summary>
-        /// 从Access中读取数据到dataGridView1
-        /// </summary>
-        private void DataBind()
-        {
-            using (OleDbConnection conn = new OleDbConnection(connString))
-            {
-                //新建datatable
-                da = new OleDbDataAdapter(sqlString, conn);
 
-                dt.Clear();
-
-                //如果数据适配器填充内存表时,没有设置主键列,而access数据表有,那么设置主键;
-                //如果access数据表的主键是自动递增,那么设置内存表的主键也是自动递增.
-                da.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-
-                //填充内存表
-                da.Fill(dt);
-
-
-                //获取每列的标题名，从1开始跳过首列（ID主键列）
-                columnsName = new string[dt.Columns.Count-1];
-                for(int i=1;i<dt.Columns.Count;i++)
-                {
-                    columnsName[i-1] = dt.Columns[i].ColumnName;
-                    Console.Out.WriteLine(columnsName[i-1]);
-                }
-            
-                //新建bindingsource
-                bs = new BindingSource();
-
-                //bindingsource绑定内存表
-                bs.DataSource = dt;
-                
-                //datagridview绑定bindingsource
-                dataGridView_c.DataSource = bs;
-            }
-        }
-
-        /// <summary>
-        /// 从dataGridView中更新数据到Access
-        /// </summary>
-        private void dataUpdate()
-        {
-            using (OleDbConnection conn = new OleDbConnection(connString))
-            {
-                da = new OleDbDataAdapter(sqlString, conn);
-                OleDbCommandBuilder cb = new OleDbCommandBuilder(da);
-                //用dataadapter的update方法自动更新access数据库
-                da.Update((DataTable)bs.DataSource);
-            }
-        }
-
-        /// <summary>
-        /// 从dataGridView中更新数据到Chart
-        /// </summary>
-        private void dataUpdataChart()
-        {
-            //chart1.Series[0].Points.DataBind(dt.AsEnumerable(), "name", "age", "");
-        }
 
         private void addNewToData()
         {
@@ -381,8 +311,7 @@ namespace Serial
         }
         private void readAccess()
         {
-            DataBind();
-            dataUpdataChart();
+            tableCmd.ReadFromAccess();
         }
 
         private void btn_getCurRow_Click(object sender, EventArgs e)
@@ -452,24 +381,112 @@ namespace Serial
 
         private void btn_savedata_Click(object sender, EventArgs e)
         {
-            dataUpdate();
-            readAccess();
+            switch (tabControl1.SelectedTab.Text)
+            {
+                case "命令记录":
+                    tableCmd.UpdateToAccess();
+                    tableCmd.ReadFromAccess();
+                    break;
+                case "账户信息":
+                    tableAccount.UpdateToAccess();
+                    tableAccount.ReadFromAccess();
+                    break;
+                case "单价设定":
+                    tablePrice.UpdateToAccess();
+                    tablePrice.ReadFromAccess();
+                    break;
+                case "营业额":
+                    tableIncome.UpdateToAccess();
+                    tableIncome.ReadFromAccess();
+                    break;
+                default:
+                    return;
+            }
             btn_savedata.Enabled = false;
-        }
-
-        private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            btn_savedata.Enabled = true;
         }
 
         private void btn_readAccess_Click(object sender, EventArgs e)
         {
-            readAccess();
+            switch (tabControl1.SelectedTab.Text)
+            {
+                case "命令记录":
+                    tableCmd.ReadFromAccess();
+                    break;
+                case "账户信息":
+                    tableAccount.ReadFromAccess();
+                    break;
+                case "单价设定":
+                    tablePrice.ReadFromAccess();
+                    break;
+                case "营业额":
+                    tableIncome.ReadFromAccess();
+                    break;
+            }
         }
 
+
+        private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            tableCmd.hasChanged = true;
+            btn_savedata.Enabled = true;
+        }
         private void dataGridView_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
+            tableCmd.hasChanged = true;
             btn_savedata.Enabled = true;
+        }
+        private void dataGridView_i_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            tableIncome.hasChanged = true;
+            btn_savedata.Enabled = true;
+        }
+        private void dataGridView_i_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            tableIncome.hasChanged = true;
+            btn_savedata.Enabled = true;
+        }
+        private void dataGridView_p_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            tablePrice.hasChanged = true;
+            btn_savedata.Enabled = true;
+        }
+        private void dataGridView_p_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            tablePrice.hasChanged = true;
+            btn_savedata.Enabled = true;
+        }
+        private void dataGridView_a_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            tableAccount.hasChanged = true;
+            btn_savedata.Enabled = true;
+        }
+        private void dataGridView_a_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            tableAccount.hasChanged = true;
+            btn_savedata.Enabled = true;
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch(tabControl1.SelectedTab.Text)
+            {
+                case "命令记录":
+                    btn_savedata.Enabled = tableCmd.hasChanged;
+                    break;
+                case "账户信息":
+                    btn_savedata.Enabled = tableAccount.hasChanged;
+                    break;
+                case "单价设定":
+                    btn_savedata.Enabled = tablePrice.hasChanged;
+                    break;
+                case "营业额":
+                    btn_savedata.Enabled = tableIncome.hasChanged;
+                    break;
+                default:
+                    btn_savedata.Enabled = false;
+                    break;
+            }
+            
         }
     }
 }
