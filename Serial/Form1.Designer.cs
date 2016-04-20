@@ -40,9 +40,9 @@
             System.Windows.Forms.GroupBox groupBox3;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.TabControl tabControl1;
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend10 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.GroupBox groupBox6;
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -55,16 +55,14 @@
             this.btn_m_ctl = new System.Windows.Forms.Button();
             this.label_m_time = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.dataGridView_c = new System.Windows.Forms.DataGridView();
+            this.dataGridView = new System.Windows.Forms.DataGridView();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.btn_savedata = new System.Windows.Forms.Button();
-            this.btn_readAccess = new System.Windows.Forms.Button();
-            this.btn_getCurRow = new System.Windows.Forms.Button();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
             this.btn_connect = new System.Windows.Forms.Button();
             this.btn_send = new System.Windows.Forms.Button();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.btn_getCurRow = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label_state_serial = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -82,10 +80,8 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label_comm_back = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.dataGridView_m = new System.Windows.Forms.DataGridView();
-            this.tabPage7 = new System.Windows.Forms.TabPage();
-            this.dataGridView_p = new System.Windows.Forms.DataGridView();
+            this.btn_savedata = new System.Windows.Forms.Button();
+            this.btn_readAccess = new System.Windows.Forms.Button();
             label = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -107,7 +103,7 @@
             groupBox3.SuspendLayout();
             tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_c)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             groupBox6.SuspendLayout();
@@ -115,10 +111,6 @@
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_cmd)).BeginInit();
             this.groupBox4.SuspendLayout();
-            this.tabPage6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_m)).BeginInit();
-            this.tabPage7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_p)).BeginInit();
             this.SuspendLayout();
             // 
             // label
@@ -143,7 +135,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(3, 82);
+            label6.Location = new System.Drawing.Point(4, 79);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(41, 12);
             label6.TabIndex = 25;
@@ -250,7 +242,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(4, 102);
+            label7.Location = new System.Drawing.Point(4, 103);
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(41, 12);
             label7.TabIndex = 27;
@@ -320,9 +312,7 @@
             // 
             // tabControl1
             // 
-            tabControl1.Controls.Add(this.tabPage6);
             tabControl1.Controls.Add(this.tabPage2);
-            tabControl1.Controls.Add(this.tabPage7);
             tabControl1.Controls.Add(this.tabPage1);
             tabControl1.Location = new System.Drawing.Point(6, 42);
             tabControl1.Name = "tabControl1";
@@ -332,26 +322,26 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.dataGridView_c);
+            this.tabPage2.Controls.Add(this.dataGridView);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(443, 303);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "命令记录";
+            this.tabPage2.Text = "表格";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // dataGridView_c
+            // dataGridView
             // 
-            this.dataGridView_c.AllowUserToAddRows = false;
-            this.dataGridView_c.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_c.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView_c.Name = "dataGridView_c";
-            this.dataGridView_c.RowTemplate.Height = 23;
-            this.dataGridView_c.Size = new System.Drawing.Size(443, 303);
-            this.dataGridView_c.TabIndex = 7;
-            this.dataGridView_c.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
-            this.dataGridView_c.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView.AllowUserToAddRows = false;
+            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView.Name = "dataGridView";
+            this.dataGridView.RowTemplate.Height = 23;
+            this.dataGridView.Size = new System.Drawing.Size(452, 342);
+            this.dataGridView.TabIndex = 7;
+            this.dataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
+            this.dataGridView.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             // 
             // tabPage1
             // 
@@ -359,24 +349,24 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(443, 303);
+            this.tabPage1.Size = new System.Drawing.Size(443, 330);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "条形图";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea10.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea10);
+            legend10.Name = "Legend1";
+            this.chart1.Legends.Add(legend10);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.CustomProperties = "EmptyPointValue=Zero";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series10.ChartArea = "ChartArea1";
+            series10.CustomProperties = "EmptyPointValue=Zero";
+            series10.Legend = "Legend1";
+            series10.Name = "Series1";
+            this.chart1.Series.Add(series10);
             this.chart1.Size = new System.Drawing.Size(455, 345);
             this.chart1.TabIndex = 6;
             this.chart1.Text = "chart1";
@@ -393,37 +383,6 @@
             groupBox6.TabIndex = 19;
             groupBox6.TabStop = false;
             groupBox6.Text = "数据分析";
-            // 
-            // btn_savedata
-            // 
-            this.btn_savedata.Enabled = false;
-            this.btn_savedata.Location = new System.Drawing.Point(122, 16);
-            this.btn_savedata.Name = "btn_savedata";
-            this.btn_savedata.Size = new System.Drawing.Size(122, 23);
-            this.btn_savedata.TabIndex = 20;
-            this.btn_savedata.Text = "将更改保存到数据库";
-            this.btn_savedata.UseVisualStyleBackColor = true;
-            this.btn_savedata.Click += new System.EventHandler(this.btn_savedata_Click);
-            // 
-            // btn_readAccess
-            // 
-            this.btn_readAccess.Location = new System.Drawing.Point(10, 16);
-            this.btn_readAccess.Name = "btn_readAccess";
-            this.btn_readAccess.Size = new System.Drawing.Size(106, 23);
-            this.btn_readAccess.TabIndex = 21;
-            this.btn_readAccess.Text = "重新读取数据库";
-            this.btn_readAccess.UseVisualStyleBackColor = true;
-            this.btn_readAccess.Click += new System.EventHandler(this.btn_readAccess_Click);
-            // 
-            // btn_getCurRow
-            // 
-            this.btn_getCurRow.Location = new System.Drawing.Point(250, 16);
-            this.btn_getCurRow.Name = "btn_getCurRow";
-            this.btn_getCurRow.Size = new System.Drawing.Size(75, 23);
-            this.btn_getCurRow.TabIndex = 9;
-            this.btn_getCurRow.Text = "读取当前行";
-            this.btn_getCurRow.UseVisualStyleBackColor = true;
-            this.btn_getCurRow.Click += new System.EventHandler(this.btn_getCurRow_Click);
             // 
             // serialPort1
             // 
@@ -449,6 +408,16 @@
             this.btn_send.Text = "下达命令";
             this.btn_send.UseVisualStyleBackColor = true;
             this.btn_send.Click += new System.EventHandler(this.btn_send_Click);
+            // 
+            // btn_getCurRow
+            // 
+            this.btn_getCurRow.Location = new System.Drawing.Point(250, 16);
+            this.btn_getCurRow.Name = "btn_getCurRow";
+            this.btn_getCurRow.Size = new System.Drawing.Size(75, 23);
+            this.btn_getCurRow.TabIndex = 9;
+            this.btn_getCurRow.Text = "读取当前行";
+            this.btn_getCurRow.UseVisualStyleBackColor = true;
+            this.btn_getCurRow.Click += new System.EventHandler(this.btn_getCurRow_Click);
             // 
             // comboBox1
             // 
@@ -512,7 +481,7 @@
             // 
             // textBox_number
             // 
-            this.textBox_number.Location = new System.Drawing.Point(45, 77);
+            this.textBox_number.Location = new System.Drawing.Point(45, 76);
             this.textBox_number.Name = "textBox_number";
             this.textBox_number.Size = new System.Drawing.Size(100, 21);
             this.textBox_number.TabIndex = 24;
@@ -520,7 +489,7 @@
             // comboBox3
             // 
             this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(70, 56);
+            this.comboBox3.Location = new System.Drawing.Point(70, 58);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(75, 20);
             this.comboBox3.TabIndex = 22;
@@ -593,9 +562,9 @@
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.dataGridView_cmd);
             this.groupBox4.Controls.Add(this.btn_send);
-            this.groupBox4.Location = new System.Drawing.Point(718, 9);
+            this.groupBox4.Location = new System.Drawing.Point(718, 13);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(175, 472);
+            this.groupBox4.Size = new System.Drawing.Size(175, 468);
             this.groupBox4.TabIndex = 17;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "控制命令";
@@ -618,45 +587,26 @@
             this.label3.TabIndex = 17;
             this.label3.Text = "待发送的命令：";
             // 
-            // tabPage6
+            // btn_savedata
             // 
-            this.tabPage6.Controls.Add(this.dataGridView_m);
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Size = new System.Drawing.Size(443, 303);
-            this.tabPage6.TabIndex = 2;
-            this.tabPage6.Text = "电机运行记录";
-            this.tabPage6.UseVisualStyleBackColor = true;
+            this.btn_savedata.Enabled = false;
+            this.btn_savedata.Location = new System.Drawing.Point(122, 16);
+            this.btn_savedata.Name = "btn_savedata";
+            this.btn_savedata.Size = new System.Drawing.Size(122, 23);
+            this.btn_savedata.TabIndex = 20;
+            this.btn_savedata.Text = "将更改保存到数据库";
+            this.btn_savedata.UseVisualStyleBackColor = true;
+            this.btn_savedata.Click += new System.EventHandler(this.btn_savedata_Click);
             // 
-            // dataGridView_m
+            // btn_readAccess
             // 
-            this.dataGridView_m.AllowUserToAddRows = false;
-            this.dataGridView_m.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_m.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView_m.Name = "dataGridView_m";
-            this.dataGridView_m.RowTemplate.Height = 23;
-            this.dataGridView_m.Size = new System.Drawing.Size(443, 301);
-            this.dataGridView_m.TabIndex = 8;
-            // 
-            // tabPage7
-            // 
-            this.tabPage7.Controls.Add(this.dataGridView_p);
-            this.tabPage7.Location = new System.Drawing.Point(4, 22);
-            this.tabPage7.Name = "tabPage7";
-            this.tabPage7.Size = new System.Drawing.Size(443, 303);
-            this.tabPage7.TabIndex = 3;
-            this.tabPage7.Text = "单价配置";
-            this.tabPage7.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView_p
-            // 
-            this.dataGridView_p.AllowUserToAddRows = false;
-            this.dataGridView_p.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_p.Location = new System.Drawing.Point(0, 1);
-            this.dataGridView_p.Name = "dataGridView_p";
-            this.dataGridView_p.RowTemplate.Height = 23;
-            this.dataGridView_p.Size = new System.Drawing.Size(443, 301);
-            this.dataGridView_p.TabIndex = 9;
+            this.btn_readAccess.Location = new System.Drawing.Point(10, 16);
+            this.btn_readAccess.Name = "btn_readAccess";
+            this.btn_readAccess.Size = new System.Drawing.Size(106, 23);
+            this.btn_readAccess.TabIndex = 21;
+            this.btn_readAccess.Text = "重新读取数据库";
+            this.btn_readAccess.UseVisualStyleBackColor = true;
+            this.btn_readAccess.Click += new System.EventHandler(this.btn_readAccess_Click);
             // 
             // Form1
             // 
@@ -686,7 +636,7 @@
             groupBox3.ResumeLayout(false);
             tabControl1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_c)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.tabPage1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             groupBox6.ResumeLayout(false);
@@ -696,10 +646,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_cmd)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            this.tabPage6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_m)).EndInit();
-            this.tabPage7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_p)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -711,7 +657,7 @@
         private System.Windows.Forms.TextBox textBox_serialDebug;
         private System.Windows.Forms.Button btn_send;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
-        private System.Windows.Forms.DataGridView dataGridView_c;
+        private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Button btn_getCurRow;
         private System.Windows.Forms.ComboBox comboBox1;
@@ -744,10 +690,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btn_savedata;
         private System.Windows.Forms.Button btn_readAccess;
-        private System.Windows.Forms.TabPage tabPage6;
-        private System.Windows.Forms.DataGridView dataGridView_m;
-        private System.Windows.Forms.TabPage tabPage7;
-        private System.Windows.Forms.DataGridView dataGridView_p;
     }
 }
 
