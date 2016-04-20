@@ -20,7 +20,9 @@ namespace Serial
         //定义处理 串口数据 的方法的委托对象
         private GSM.HandleSerialRecvDelegate gsmSerialHandle;
 
-        private Form1.HandleInterfaceUpdataDelegate updateUI;
+        private Form1.HandleInterfaceUpdataDelegate updateMainUI;
+
+        private static System.Timers.Timer timer_message_out;
 
         private string message_number;
         private string message_text;
@@ -46,16 +48,31 @@ namespace Serial
                 gsmSerialHandle = new HandleSerialRecvDelegate(serialRecv);
 
                 //得到从主线程获得的更新UI的委托对象
-                updateUI = ui;
+                updateMainUI = ui;
+
+                timer_message_out = new System.Timers.Timer(10000);
+                timer_message_out.AutoReset = false;
+                timer_message_out.Elapsed += timer_message_out_tick;
             }
         }
-        
+        private void timer_message_out_tick(object sender, EventArgs e)
+        {
+            if(sendingMessage!=0)
+            {
+                Console.Out.WriteLine("短信发送失败！超时");
+                sendingMessage = -1;
+                sendMessage(null, null);
+            }
+        }
         public void serialRecv(string str)
         {
             //将收到的串口信息以回车+换行符分隔，并丢弃空的项
             String[] package = str.Split("\r\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             if (package.Length == 0)
                 return;
+
+            //先把串口原始信息显示在串口调试窗口
+            updateMainUI(Form1.UpdateUIwhich.TextboxSerial, str);
 
             if (package[0].StartsWith("AT+CMGR="))
             {
@@ -90,7 +107,7 @@ namespace Serial
 
                 String comb = message_from + "|" + message_date + "|" + message_time + "|" + message;
 
-                updateUI(Form1.UpdateUIwhich.TextboxRecv, comb);
+                updateMainUI(Form1.UpdateUIwhich.TextboxRecv, comb);
             }
             else if (package[0].StartsWith("+CMTI: \"SM\""))
             {
@@ -127,6 +144,7 @@ namespace Serial
             }
             else if (package[0].StartsWith("+CMGS"))
             {
+                
                 sendMessage(null, null);
             }
             else
@@ -134,14 +152,18 @@ namespace Serial
                 goto RecvError;
             }
             return;
-            RecvError:
-            Console.Out.WriteLine("---------------");
-            Console.Out.WriteLine("收到一个结尾不为OK或者无法识别其类型的GSM数据包：");
-            foreach (String i in package)
+RecvError:
+            if(sendingMessage!=4)
             {
-                Console.Out.WriteLine(i);
+                Console.Out.WriteLine("---------------");
+                Console.Out.WriteLine("收到一个无法识别其类型的GSM数据包：");
+                foreach (String i in package)
+                {
+                    Console.Out.WriteLine(i);
+                }
+                Console.Out.WriteLine("\n---------------");
             }
-            Console.Out.WriteLine("\n---------------");
+            
         }
         public void sendMessage(String number, String text)
         {
@@ -154,7 +176,9 @@ namespace Serial
                             return;
                         message_number = number;
                         message_text = text;
-                        
+
+                        timer_message_out.Enabled = true;//开始计时
+
                         Console.Out.WriteLine("进入发短信第一阶段");
                         //进入发短信的第一阶段
                         sendingMessage = 1;
@@ -180,14 +204,19 @@ namespace Serial
                         serialPort1.Write(b, 0, 1);
                         break;
                     case 4:
-                        updateUI(Form1.UpdateUIwhich.TextboxSend, message_text + "|OK");
+                        //发送成功，停止计时
+                        timer_message_out.Enabled = false;
+                        updateMainUI(Form1.UpdateUIwhich.TextboxSend, message_text + "|OK");
                         message_number = null;
                         message_text = null;
+                        sendingMessage = 0;
                         break;
                     case -1:
-                        updateUI(Form1.UpdateUIwhich.TextboxSend, message_text + "|NO");
+                        timer_message_out.Enabled = false;
+                        updateMainUI(Form1.UpdateUIwhich.TextboxSend, message_text + "|NO");
                         message_number = null;
                         message_text = null;
+                        sendingMessage = 0;
                         break;
                 }
             }

@@ -18,21 +18,9 @@ namespace Serial
 {
     public partial class Form1 : Form
     {
-        private SystemState systemState = 0;
-
         private Boolean M_State=false;
         private DateTime M_Time;
 
-        private enum SystemState
-        {
-            Disconnected,
-            Getting,
-            Ready,
-        };
-        public enum UpdateEvent
-        {
-            SerialState=0,
-        }
         const String mdbPath = "F:\\VSproject\\Serial\\yyq.mdb";
         const String tableName = "table1";
         //连接字符串,用来连接Database数据库;
@@ -41,7 +29,6 @@ namespace Serial
                 Provider=Microsoft.Jet.OLEDB.4.0;
                 Data Source=" + mdbPath + ";"
             ;
-        
         //SQL查询语句,用来从Database数据库tblMat表中获取所有数据;
         private string sqlString = "SELECT * from " + tableName;
 
@@ -52,6 +39,7 @@ namespace Serial
 
         private DataTable dt = new DataTable();
 
+        //目标名和目标SIM号码的键值对表
         Dictionary<String, String> target=new Dictionary<String, String>();
 
         private static System.Timers.Timer timer_serial;
@@ -119,20 +107,32 @@ namespace Serial
             }
 
             //不可用窗体里的定时器控件，因为对控件的操作比如定时器的启动和停止，需要在UI线程操作，在串口接收的函数里并不是UI线程，无法操作
-            timer_serial = new System.Timers.Timer(1000);
 
+            //定时一秒的串口接收等待时间
+            timer_serial = new System.Timers.Timer(1000);
+            //定时十秒的短信发送超时时间
+            
             //注册计时器的事件
             timer_serial.Elapsed += new ElapsedEventHandler(timer_serial_Tick);
-
-            //设置时间间隔为2秒（2000毫秒），覆盖构造函数设置的间隔
-            timer_serial.Interval = 1000;
 
             //设置是执行一次（false）还是一直执行(true)，默认为true
             timer_serial.AutoReset = false;
 
         }
 
+        private void MessageProcess(Boolean isSend, String[] text)
+        {
+            if(isSend)
+            {
+                //处理发出的短信 text[0]
 
+            }
+            else
+            {
+                //处理收到短信 
+                
+            }
+        }
         public enum UpdateUIwhich
         {
             TextboxSend,
@@ -141,29 +141,33 @@ namespace Serial
         }
         private void UpdateUI(UpdateUIwhich which, String str)
         {
-            textBox1.Text = str + "-----------\n";
+            textBox_serialDebug.Text += str + "-----------\r\n";
             switch(which)
             {
                 case UpdateUIwhich.TextboxRecv:
                     String[] message = str.Split('|');
-                    textBox_message_recv.Text += "来自:" + message[0] + "\n日期:" + message[1] + "\n时间:" + message[2] + "\n内容:" + message[3] + "\n----------\n";
+                    textBox_message_recv.Text += "来自:" + message[0] + "\r\n日期:" + message[1] + "\r\n时间:" + message[2] + "\r\n内容:" + message[3] + "\r\n----------\r\n";
+                    MessageProcess(false, message);
                     break;
                 case UpdateUIwhich.TextboxSend:
                     string[] temp = str.Split('|');
                     if(temp[1]=="OK")
                     {
-                        textBox_message_send.Text += "-----Message-----" + temp[0] + "\n-----sent-----\n";
+                        textBox_message_send.Text += "-----Message-----\r\n" + temp[0] + "\r\n-----sent-----\r\n";
                         Console.Out.WriteLine("短信发送完成.");
+                        MessageProcess(false, temp);
                     }
                     else
                     {
-                        textBox_message_send.Text += "-----Message-----" + temp[0] + "\n-----sent-----\n";
+                        textBox_message_send.Text += "-----Message-----\r\n" + temp[0] + "\r\n---sent-failed-\r\n";
                         Console.Out.WriteLine("短信发送失败.");
                         MessageBox.Show("短信发送失败！", "错误");
                     }
                     btn_sendMessage.Enabled = true;
                     comboBox3.Enabled = true;
                     textBox_number.Enabled = true;
+                    btn_command.Enabled = true;
+                    btn_send.Enabled = true;
                     btn_sendMessage.Text = "发送短信";
                     break;
                 case UpdateUIwhich.TextboxSerial:
@@ -173,11 +177,17 @@ namespace Serial
    
         private void btn_sendMessage_Click(object sender, EventArgs e)
         {
+            
             btn_sendMessage.Enabled = false;
+            btn_command.Enabled = false;
             comboBox3.Enabled = false;
             textBox_number.Enabled = false;
+            btn_send.Enabled = false;
+
             btn_sendMessage.Text = "正在发送";
+            
             gsm.sendMessage(textBox_number.Text, textBox_messageText.Text);
+            
         }
         private void changeSkinState(Boolean isSafe)
         {
@@ -202,7 +212,9 @@ namespace Serial
                     serialPort1.Close();
                     label_state_serial.Text = "串口状态：已断开";
                     btn_connect.Text = "连接串口";
-                    systemState = SystemState.Disconnected;
+
+                    comboBox1.Enabled = true;
+                    comboBox2.Enabled = true;
                 }
                 else
                 {
@@ -215,7 +227,10 @@ namespace Serial
 
                     gsm = new GSM(serialPort1, interfaceUpdataHandle);
                     gsmSerialProcess = gsm.GsmSerialHandle;
-                    //serial_getInfo();
+
+                    comboBox1.Enabled = false;
+                    comboBox2.Enabled = false;
+
                 }
             }catch (Exception ex)
             {
@@ -283,13 +298,16 @@ namespace Serial
             //chart1.Series.Add(dataTableSeries1);
         }
 
+        private void addNewToData()
+        {
 
+        }
         private void btn_send_Click(object sender, EventArgs e)
         {
             if(serialPort1.IsOpen)
             {
-                String temp = textBox_command.Text.ToString() + "\r\n";
-                serialPort1.Write(temp.ToCharArray(), 0, temp.Length);
+                String temp = textBox_command.Text + "\r\n";
+                serialPort1.Write(temp);
             }
             else
             {
@@ -298,18 +316,16 @@ namespace Serial
 
         }
 
- 
+        private String recvBuf = "";
+        private Boolean isReceiving = false;
         private void timer_serial_Tick(object sender, EventArgs e)
         {
             isReceiving = false;
             Console.Out.WriteLine("串口数据接收完成");
-            //this.BeginInvoke(interfaceUpdataHandle, recvBuf);
 
-            //将收到的串口数据交给GSM类处理
+            //将收到的串口数据委托给GSM类处理
             this.BeginInvoke(gsmSerialProcess, recvBuf);
         }
-        private String recvBuf = "";
-        private Boolean isReceiving = false;
         /// <summary>
         /// 串口接收处理
         /// </summary>
@@ -335,15 +351,6 @@ namespace Serial
                 recvBuf += Convert.ToChar(b);// == '\n' ? '@' : Convert.ToChar(b);
             }
         }
-        private void serial_getInfo()
-        {
-            label_state_serial.Text = "串口状态：已连接，正在获取数据";
-            systemState = SystemState.Getting;
-
-            serialPort1.WriteLine("Hello world");
-
-        }
-        
 
         private void btn_readAccess_Click(object sender, EventArgs e)
         {
@@ -401,7 +408,7 @@ namespace Serial
         private void dataGridView2_CurrentCellChanged(object sender, EventArgs e)
         {
             label3.Text = "待发送的命令：" + dataGridView2.CurrentRow.Cells[0].Value+"\n附带的参数值："+ dataGridView2.CurrentRow.Cells[1].Value;
-            //serialPort1.WriteLine("AT");
+            
             
         }
 
@@ -409,17 +416,6 @@ namespace Serial
         {
             Console.WriteLine(dataGridView2.CurrentRow.Cells[0].Value);
             Console.WriteLine(dataGridView2.CurrentRow.Cells[1].Value);
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            if(serialPort1.IsOpen)
-            {
-                String temp = textBox_command.Text + "\r\n";
-                serialPort1.Write(temp);
-                
-            }
-            
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
