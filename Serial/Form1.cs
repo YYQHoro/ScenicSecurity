@@ -39,12 +39,10 @@ namespace Serial
         //SQL查询语句,用来从Database数据库tblMat表中获取所有数据;
         private string sqlString = "SELECT * from " + tableNameCmd;
 
-        //dataadapter,使数据库的表和内存中的表datatable通讯
-        private OleDbDataAdapter da;
-        //bindingsource,使内存中的表datatable与窗体的显示控件datagridview通讯
-        private BindingSource bs;
+        
+        
 
-        private DataTable dt = new DataTable();
+        
 
         //目标名和目标SIM号码的键值对表
         Dictionary<String, String> target=new Dictionary<String, String>();
@@ -272,13 +270,17 @@ namespace Serial
         /// </summary>
         private void DataBind()
         {
+            DataTable dt;
+            //dataadapter,使数据库的表和内存中的表datatable通讯
+            OleDbDataAdapter da;
+            //bindingsource,使内存中的表datatable与窗体的显示控件datagridview通讯
+            BindingSource bs;
             using (OleDbConnection conn = new OleDbConnection(connString))
             {
                 //新建datatable
                 da = new OleDbDataAdapter(sqlString, conn);
-
-                dt.Clear();
-
+                dt = new DataTable();
+                
                 //如果数据适配器填充内存表时,没有设置主键列,而access数据表有,那么设置主键;
                 //如果access数据表的主键是自动递增,那么设置内存表的主键也是自动递增.
                 da.MissingSchemaAction = MissingSchemaAction.AddWithKey;
@@ -311,12 +313,13 @@ namespace Serial
         /// </summary>
         private void dataUpdate()
         {
+            OleDbDataAdapter da;
             using (OleDbConnection conn = new OleDbConnection(connString))
             {
                 da = new OleDbDataAdapter(sqlString, conn);
-                OleDbCommandBuilder cb = new OleDbCommandBuilder(da);
+                //OleDbCommandBuilder cb = new OleDbCommandBuilder(da);
                 //用dataadapter的update方法自动更新access数据库
-                da.Update((DataTable)bs.DataSource);
+                da.Update((DataTable)dataGridView_c.DataSource);
             }
         }
 
