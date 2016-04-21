@@ -13,7 +13,7 @@ namespace Serial
     class Table
     {
         String mdbPath;
-        String tableName;
+        public String tableName;
         String[] columnsName;
 
         public Boolean hasChanged = false;
@@ -51,7 +51,7 @@ namespace Serial
         }
 
         /// <summary>
-        /// 从Access中读取数据到dataGridView1
+        /// 从Access中读取数据到dataGridView
         /// </summary>
         public void ReadFromAccess()
         {
@@ -68,7 +68,6 @@ namespace Serial
 
                 //填充内存表
                 da.Fill(dt);
-
 
                 //获取每列的标题名，从1开始跳过首列（ID主键列）
                 columnsName = new string[dt.Columns.Count - 1];
@@ -117,6 +116,7 @@ namespace Serial
         public void addNew(String []text)
         {
             DataBase.WriteDataByColumns(mdbPath, tableName, columnsName, text);
+            ReadFromAccess();
         }
     }
 }

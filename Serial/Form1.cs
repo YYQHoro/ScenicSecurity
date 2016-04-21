@@ -38,7 +38,7 @@ namespace Serial
         Table tableDeviceSIM;
 
         //目标名和目标SIM号码的键值对表
-        Dictionary<String, String> target=new Dictionary<String, String>();
+        public Dictionary<String, String> target=new Dictionary<String, String>();
 
         private static System.Timers.Timer timer_serial;
 
@@ -56,12 +56,17 @@ namespace Serial
         {
             tableDeviceSIM.ReadFromAccess();
             target.Clear();
-            foreach(DataRow dr in tableDeviceSIM.dataGridView.Rows)
+            foreach(DataGridViewRow dr in tableDeviceSIM.dataGridView.Rows)
             {
-                target.Add(dr[1].ToString(),dr[2].ToString());
+                //Console.Out.WriteLine(dr[0].ToString());
+                if (dr.Cells[1].Value != null)
+                {
+                    target.Add(dr.Cells[1].Value.ToString(),dr.Cells[2].Value.ToString());
+                }
             }
             if (target.Count > 0)
             {
+                comboBox3.Items.Clear();
                 foreach (KeyValuePair<string, string> ky in target)
                 {
                     comboBox3.Items.Add(ky.Key);
@@ -130,20 +135,24 @@ namespace Serial
             tableDeviceRecord = new Table(mdbPath, tableNameDeviceRecord, dataGridView_r, null);
             tableDeviceSIM= new Table(mdbPath, tableNameDeviceSIM, dataGridView_s, null);
 
+            RefreashTarget();
+
             tablePrice.ReadFromAccess();
             tableIncome.ReadFromAccess();
             tableAccount.ReadFromAccess();
             tableCmd.ReadFromAccess();
-            tableDeviceSIM.ReadFromAccess();
             tableDeviceRecord.ReadFromAccess();
 
-            
-            //RefreashTarget();
 
-            foreach(TabPage tp in tabControl1.TabPages)
-            {
-                Console.WriteLine(tp.Tag);
-            }
+            tabPageChart.Tag = tableIncome;
+            tabPageAccount.Tag = tableAccount;
+            tabPageCmd.Tag = tableCmd;
+            tabPageRecord.Tag = tableDeviceRecord;
+            tabPageSim.Tag = tableDeviceSIM;
+            tabPagePrice.Tag = tablePrice;
+            tabPageIncome.Tag = tableIncome;
+
+            
         }
 
         private void MessageProcess(Boolean isSend, String[] text)
@@ -162,8 +171,27 @@ namespace Serial
                 "时间:" + message[2] 
                 "内容:" + message[3]
                 */
-                tableCmd.addNew(text);
-                tableCmd.UpdateToAccess();
+                foreach (KeyValuePair<string, string> ky in target)
+                {
+                    if (ky.Value.Equals(text[0]))
+                    {
+                        String[] temp =
+                        {
+                            ky.Key,
+                            text[3],
+                            "0",
+                            text[1],
+                            text[2],
+                        };
+                        tableCmd.addNew(temp);
+                    }
+                    else
+                    {
+                        textBox_serialDebug.Text += "收到一封短信来自：";
+                        textBox_serialDebug.Text += "SIM号：" + text[0] + "\r\n无法为其匹配设备名\r\n";
+                        textBox_serialDebug.Text += "---Error---\r\n";
+                    }
+                }
                 //dataUpdate();
             }
         }
@@ -175,7 +203,7 @@ namespace Serial
         }
         private void UpdateUI(UpdateUIwhich which, String str)
         {
-            textBox_serialDebug.Text += str + "-----------\r\n";
+            textBox_serialDebug.Text += str + "\r\n-----------\r\n";
             switch(which)
             {
                 case UpdateUIwhich.TextboxRecv:
@@ -374,8 +402,6 @@ namespace Serial
         private void dataGridView2_CurrentCellChanged(object sender, EventArgs e)
         {
             label3.Text = "待发送的命令：" + dataGridView_cmd.CurrentRow.Cells[0].Value+"\n附带的参数值："+ dataGridView_cmd.CurrentRow.Cells[1].Value;
-            
-            
         }
 
         private void dataGridView2_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -391,132 +417,48 @@ namespace Serial
 
         private void btn_savedata_Click(object sender, EventArgs e)
         {
-            switch (tabControl1.SelectedTab.Tag.ToString())
+            if (tabControl1.SelectedTab.Tag != null)
             {
-                case "cmd":
-                    tableCmd.UpdateToAccess();
-                    tableCmd.ReadFromAccess();
-                    break;
-                case "account":
-                    tableAccount.UpdateToAccess();
-                    tableAccount.ReadFromAccess();
-                    break;
-                case "price":
-                    tablePrice.UpdateToAccess();
-                    tablePrice.ReadFromAccess();
-                    break;
-                case "income":
-                    tableIncome.UpdateToAccess();
-                    tableIncome.ReadFromAccess();
-                    break;
-                case "sim":
-                    tableDeviceSIM.UpdateToAccess();
-                    tableDeviceSIM.ReadFromAccess();
-                    break;
-                case "record":
-                    tableDeviceRecord.UpdateToAccess();
-                    tableDeviceRecord.ReadFromAccess();
-                    break;
-                default:
-                    return;
+                ((Table)tabControl1.SelectedTab.Tag).UpdateToAccess();
+                if (((Table)tabControl1.SelectedTab.Tag).tableName=="deviceSIM")
+                {
+                    RefreashTarget();
+                }
+                else
+                {
+                    ((Table)tabControl1.SelectedTab.Tag).ReadFromAccess();
+                }
             }
             btn_savedata.Enabled = false;
         }
 
         private void btn_readAccess_Click(object sender, EventArgs e)
         {
-            switch (tabControl1.SelectedTab.Tag.ToString())
+            if (tabControl1.SelectedTab.Tag != null)
             {
-                case "cmd":
-                    tableCmd.ReadFromAccess();
-                    break;
-                case "account":
-                    tableAccount.ReadFromAccess();
-                    break;
-                case "price":
-                    tablePrice.ReadFromAccess();
-                    break;
-                case "income":
-                    tableIncome.ReadFromAccess();
-                    break;
-                case "sim":
-                    tableDeviceSIM.ReadFromAccess();
-                    break;
-                case "record":
-                    tableDeviceRecord.ReadFromAccess();
-                    break;
+                ((Table)tabControl1.SelectedTab.Tag).ReadFromAccess();
             }
         }
-
-
         private void dataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            tableCmd.hasChanged = true;
+            ((Table)tabControl1.SelectedTab.Tag).hasChanged = true;
             btn_savedata.Enabled = true;
         }
         private void dataGridView_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
         {
-            tableCmd.hasChanged = true;
+            ((Table)tabControl1.SelectedTab.Tag).hasChanged = true;
             btn_savedata.Enabled = true;
         }
-        private void dataGridView_i_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            tableIncome.hasChanged = true;
-            btn_savedata.Enabled = true;
-        }
-        private void dataGridView_i_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
-        {
-            tableIncome.hasChanged = true;
-            btn_savedata.Enabled = true;
-        }
-        private void dataGridView_p_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            tablePrice.hasChanged = true;
-            btn_savedata.Enabled = true;
-        }
-        private void dataGridView_p_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
-        {
-            tablePrice.hasChanged = true;
-            btn_savedata.Enabled = true;
-        }
-        private void dataGridView_a_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            tableAccount.hasChanged = true;
-            btn_savedata.Enabled = true;
-        }
-        private void dataGridView_a_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
-        {
-            tableAccount.hasChanged = true;
-            btn_savedata.Enabled = true;
-        }
-
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch (tabControl1.SelectedTab.Tag.ToString())
+            if (tabControl1.SelectedTab.Tag != null)
             {
-                case "cmd":
-                    btn_savedata.Enabled = tableCmd.hasChanged;
-                    break;
-                case "account":
-                    btn_savedata.Enabled = tableAccount.hasChanged;
-                    break;
-                case "price":
-                    btn_savedata.Enabled = tablePrice.hasChanged;
-                    break;
-                case "income":
-                    btn_savedata.Enabled = tableIncome.hasChanged;
-                    break;
-                case "sim":
-                    btn_savedata.Enabled = tableDeviceSIM.hasChanged;
-                    break;
-                case "record":
-                    btn_savedata.Enabled = tableDeviceRecord.hasChanged;
-                    break;
-                default:
-                    btn_savedata.Enabled = false;
-                    break;
+                btn_savedata.Enabled = ((Table)tabControl1.SelectedTab.Tag).hasChanged;
             }
-            
+            else
+            {
+                btn_savedata.Enabled = false;
+            }
         }
     }
 }
