@@ -24,15 +24,18 @@ namespace Serial
         const String mdbPath = "database.mdb";
         const String tableNameCmd = "cmd";
         const String tableNameIncome = "income";
-        const String tableNameDevice = "device";
+        const String tableNamePrice = "price";
         const String tableNameAccount = "account";
+        const String tableNameDeviceRecord = "deviceRecord";
+        const String tableNameDeviceSIM = "deviceSIM";
 
-        TableCmd tableCmd;
-        TableAccount tableAccount;
-        TablePrice tablePrice;
-        TableIncome tableIncome;
 
-        string tabCmdName, tabIncomeName, tabDeviceName, tabAccountName;
+        Table tableCmd;
+        Table tableAccount;
+        Table tablePrice;
+        Table tableIncome;
+        Table tableDeviceRecord;
+        Table tableDeviceSIM;
 
         //目标名和目标SIM号码的键值对表
         Dictionary<String, String> target=new Dictionary<String, String>();
@@ -48,8 +51,24 @@ namespace Serial
         public Form1()
         {
             InitializeComponent();
-            dataGridView_c.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-
+        }
+        public void RefreashTarget()
+        {
+            tableDeviceSIM.ReadFromAccess();
+            target.Clear();
+            foreach(DataRow dr in tableDeviceSIM.dataGridView.Rows)
+            {
+                target.Add(dr[1].ToString(),dr[2].ToString());
+            }
+            if (target.Count > 0)
+            {
+                foreach (KeyValuePair<string, string> ky in target)
+                {
+                    comboBox3.Items.Add(ky.Key);
+                }
+                comboBox3.SelectedIndex = 0;
+                textBox_number.Text = target[comboBox3.SelectedItem.ToString()];
+            }
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -90,17 +109,7 @@ namespace Serial
                 dataGridView_cmd.Rows[i].Cells[0].Value = name;
             }
             
-            //target.Add("一号机", "15177325008");
-            target.Add("一号机", "13377270802");
-            if (target.Count > 0)
-            {
-                foreach (KeyValuePair<string, string> ky in target)
-                {
-                    comboBox3.Items.Add(ky.Key);
-                }
-                comboBox3.SelectedIndex = 0;
-                textBox_number.Text = target[comboBox3.SelectedItem.ToString()];
-            }
+
 
             //不可用窗体里的定时器控件，因为对控件的操作比如定时器的启动和停止，需要在UI线程操作，在串口接收的函数里并不是UI线程，无法操作
 
@@ -114,19 +123,26 @@ namespace Serial
             //设置是执行一次（false）还是一直执行(true)，默认为true
             timer_serial.AutoReset = false;
 
-            tableCmd = new TableCmd(mdbPath,tableNameCmd,dataGridView_c);
-            tableAccount = new TableAccount(mdbPath, tableNameAccount, dataGridView_a);
-            tableIncome = new TableIncome(mdbPath, tableNameIncome, dataGridView_i,chart1);
-            tablePrice = new TablePrice(mdbPath, tableNameDevice, dataGridView_d);
+            tableCmd = new Table(mdbPath, tableNameCmd, dataGridView_c, null);
+            tableAccount = new Table(mdbPath, tableNameAccount, dataGridView_a, null);
+            tableIncome = new Table(mdbPath, tableNameIncome, dataGridView_i,chart1);
+            tablePrice = new Table(mdbPath, tableNamePrice, dataGridView_d, null);
+            tableDeviceRecord = new Table(mdbPath, tableNameDeviceRecord, dataGridView_r, null);
+            tableDeviceSIM= new Table(mdbPath, tableNameDeviceSIM, dataGridView_s, null);
 
             tablePrice.ReadFromAccess();
             tableIncome.ReadFromAccess();
             tableAccount.ReadFromAccess();
             tableCmd.ReadFromAccess();
+            tableDeviceSIM.ReadFromAccess();
+            tableDeviceRecord.ReadFromAccess();
 
-            foreach (TabPage a in tabControl1.Controls)
+            
+            //RefreashTarget();
+
+            foreach(TabPage tp in tabControl1.TabPages)
             {
-                
+                Console.WriteLine(tp.Tag);
             }
         }
 
@@ -254,12 +270,6 @@ namespace Serial
             }
         }
 
-
-
-        private void addNewToData()
-        {
-
-        }
         private void btn_send_Click(object sender, EventArgs e)
         {
             if(serialPort1.IsOpen)
@@ -381,23 +391,31 @@ namespace Serial
 
         private void btn_savedata_Click(object sender, EventArgs e)
         {
-            switch (tabControl1.SelectedTab.Text)
+            switch (tabControl1.SelectedTab.Tag.ToString())
             {
-                case "命令记录":
+                case "cmd":
                     tableCmd.UpdateToAccess();
                     tableCmd.ReadFromAccess();
                     break;
-                case "账户信息":
+                case "account":
                     tableAccount.UpdateToAccess();
                     tableAccount.ReadFromAccess();
                     break;
-                case "单价设定":
+                case "price":
                     tablePrice.UpdateToAccess();
                     tablePrice.ReadFromAccess();
                     break;
-                case "营业额":
+                case "income":
                     tableIncome.UpdateToAccess();
                     tableIncome.ReadFromAccess();
+                    break;
+                case "sim":
+                    tableDeviceSIM.UpdateToAccess();
+                    tableDeviceSIM.ReadFromAccess();
+                    break;
+                case "record":
+                    tableDeviceRecord.UpdateToAccess();
+                    tableDeviceRecord.ReadFromAccess();
                     break;
                 default:
                     return;
@@ -407,19 +425,25 @@ namespace Serial
 
         private void btn_readAccess_Click(object sender, EventArgs e)
         {
-            switch (tabControl1.SelectedTab.Text)
+            switch (tabControl1.SelectedTab.Tag.ToString())
             {
-                case "命令记录":
+                case "cmd":
                     tableCmd.ReadFromAccess();
                     break;
-                case "账户信息":
+                case "account":
                     tableAccount.ReadFromAccess();
                     break;
-                case "单价设定":
+                case "price":
                     tablePrice.ReadFromAccess();
                     break;
-                case "营业额":
+                case "income":
                     tableIncome.ReadFromAccess();
+                    break;
+                case "sim":
+                    tableDeviceSIM.ReadFromAccess();
+                    break;
+                case "record":
+                    tableDeviceRecord.ReadFromAccess();
                     break;
             }
         }
@@ -468,19 +492,25 @@ namespace Serial
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            switch(tabControl1.SelectedTab.Text)
+            switch (tabControl1.SelectedTab.Tag.ToString())
             {
-                case "命令记录":
+                case "cmd":
                     btn_savedata.Enabled = tableCmd.hasChanged;
                     break;
-                case "账户信息":
+                case "account":
                     btn_savedata.Enabled = tableAccount.hasChanged;
                     break;
-                case "单价设定":
+                case "price":
                     btn_savedata.Enabled = tablePrice.hasChanged;
                     break;
-                case "营业额":
+                case "income":
                     btn_savedata.Enabled = tableIncome.hasChanged;
+                    break;
+                case "sim":
+                    btn_savedata.Enabled = tableDeviceSIM.hasChanged;
+                    break;
+                case "record":
+                    btn_savedata.Enabled = tableDeviceRecord.hasChanged;
                     break;
                 default:
                     btn_savedata.Enabled = false;

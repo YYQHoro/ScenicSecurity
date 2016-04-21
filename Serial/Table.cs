@@ -6,14 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace Serial
 {
-    class TablePrice
+    class Table
     {
         String mdbPath;
         String tableName;
         String[] columnsName;
+
         public Boolean hasChanged = false;
 
         //连接字符串,用来连接Database数据库;
@@ -29,18 +31,23 @@ namespace Serial
 
         private DataTable dt = new DataTable();
 
-        private DataGridView dataGridView;
+        public DataGridView dataGridView;
+        private Chart chart;
 
-        public TablePrice(String mdbPath, String tableName, DataGridView dgv)
+        public Table(String mdbPath, String tableName, DataGridView dgv,Chart chart)
         {
             if (dgv != null)
             {
                 this.mdbPath = mdbPath;
                 this.tableName = tableName;
                 dataGridView = dgv;
+                this.chart = chart;
                 connString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdbPath + ";";
                 sqlString = "SELECT * from " + tableName;
+                //设置列宽
+                dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             }
+
         }
 
         /// <summary>
@@ -79,6 +86,7 @@ namespace Serial
 
                 //datagridview绑定bindingsource
                 dataGridView.DataSource = bs;
+                updataToChart();
             }
         }
 
@@ -95,6 +103,15 @@ namespace Serial
                 da.Update((DataTable)bs.DataSource);
                 hasChanged = false;
             }
+        }
+
+        /// <summary>
+        /// 从dataGridView中更新数据到Chart
+        /// </summary>
+        public void updataToChart()
+        {
+            if(chart!=null)
+                chart.Series[0].Points.DataBind(dt.AsEnumerable(),columnsName[1],columnsName[0], "");
         }
 
         public void addNew(String []text)
