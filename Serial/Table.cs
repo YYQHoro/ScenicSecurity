@@ -12,27 +12,42 @@ namespace Serial
 {
     class Table
     {
+        /// <summary>
+        /// 数据库文件名
+        /// </summary>
         String mdbPath;
+        /// <summary>
+        /// 表名
+        /// </summary>
         public String tableName;
+        /// <summary>
+        /// 列名
+        /// </summary>
         String[] columnsName;
 
+        /// <summary>
+        /// 用户是否做了修改
+        /// </summary>
         public Boolean hasChanged = false;
 
-        //连接字符串,用来连接Database数据库;
-        //如果没有密码请去掉JET OLEDB:Database Password=***;
         string connString;
-        //SQL查询语句,用来从Database数据库tblMat表中获取所有数据;
-        string sqlString;
 
-        //dataadapter,使数据库的表和内存中的表datatable通讯
-        private OleDbDataAdapter da;
-        //bindingsource,使内存中的表datatable与窗体的显示控件datagridview通讯
-        private BindingSource bs;
+        string sqlString;
 
         private DataTable dt = new DataTable();
 
+        /// <summary>
+        /// DataAdapter,使数据库的表和内存中的表DataTable通讯
+        /// </summary>
+        private OleDbDataAdapter da;
+
+        /// <summary>
+        /// BindingSource,使内存中的表DataTable与窗体的显示控件datagridview通讯
+        /// </summary>
+        private BindingSource bs;
+
         public DataGridView dataGridView;
-        private Chart chart;
+        public Chart chart;
 
         public Table(String mdbPath, String tableName, DataGridView dgv,Chart chart)
         {
@@ -42,8 +57,13 @@ namespace Serial
                 this.tableName = tableName;
                 dataGridView = dgv;
                 this.chart = chart;
+
+                //连接字符串,用来连接Database数据库;
                 connString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdbPath + ";";
+                
+                //SQL查询语句,用来从Database数据库tblMat表中获取所有数据;
                 sqlString = "SELECT * from " + tableName;
+
                 //设置列宽
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
             }
@@ -83,21 +103,24 @@ namespace Serial
                 //bindingsource绑定内存表
                 bs.DataSource = dt;
 
-                //datagridview绑定bindingsource
+                //datagridview绑定bindingsource，至此dataGridView就自动显示内容了
                 dataGridView.DataSource = bs;
+
+                //更新图表（如果有）
                 updataToChart();
             }
         }
 
         /// <summary>
-        /// 从dataGridView中更新数据到Access
+        /// 把dataGridView的数据写到Access
         /// </summary>
         public void UpdateToAccess()
         {
             using (OleDbConnection conn = new OleDbConnection(connString))
             {
                 da = new OleDbDataAdapter(sqlString, conn);
-                OleDbCommandBuilder cb = new OleDbCommandBuilder(da);
+                //调用一下OleDbCommandBuilder的构造方法，不然会无法自动生成SQL语句
+                new OleDbCommandBuilder(da);
                 //用dataadapter的update方法自动更新access数据库
                 da.Update((DataTable)bs.DataSource);
                 hasChanged = false;
@@ -112,7 +135,10 @@ namespace Serial
             if(chart!=null)
                 chart.Series[0].Points.DataBind(dt.AsEnumerable(),columnsName[1],columnsName[0], "");
         }
-
+        /// <summary>
+        /// 添加新数据到数据库然后重新刷新表格
+        /// </summary>
+        /// <param name="text">数据内容数组，数组内部顺序等同相应表格的列顺序(舍弃第一个ID列)</param>
         public void addNew(String []text)
         {
             DataBase.WriteDataByColumns(mdbPath, tableName, columnsName, text);

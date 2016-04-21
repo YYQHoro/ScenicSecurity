@@ -29,6 +29,24 @@ namespace Serial
         const String tableNameDeviceRecord = "deviceRecord";
         const String tableNameDeviceSIM = "deviceSIM";
 
+        /// <summary>
+        /// 将更新的UI
+        /// </summary>
+        public enum UpdateUIwhich
+        {
+            /// <summary>
+            /// 发短信的文本框
+            /// </summary>
+            TextboxSend,
+            /// <summary>
+            /// 收短信的文本框
+            /// </summary>
+            TextboxRecv,
+            /// <summary>
+            /// 串口调试的文本框
+            /// </summary>
+            TextboxSerial,
+        }
 
         Table tableCmd;
         Table tableAccount;
@@ -48,10 +66,16 @@ namespace Serial
         public delegate void HandleInterfaceUpdataDelegate(UpdateUIwhich which, String str);
         private HandleInterfaceUpdataDelegate interfaceUpdataHandle;
 
+
+
         public Form1()
         {
             InitializeComponent();
         }
+        
+        /// <summary>
+        /// 重新从数据库中读取设备名和SIM号码
+        /// </summary>
         public void RefreashTarget()
         {
             tableDeviceSIM.ReadFromAccess();
@@ -75,6 +99,7 @@ namespace Serial
                 textBox_number.Text = target[comboBox3.SelectedItem.ToString()];
             }
         }
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -84,10 +109,10 @@ namespace Serial
             string[] portNames = SerialPort.GetPortNames();
             foreach (string name in portNames)
             {
-                comboBox1.Items.Add(name);
+                comboBox_serialNumber.Items.Add(name);
             }
-            //默认选中最后一个
-            comboBox1.SelectedIndex = comboBox1.Items.Count - 1;
+            //默认选中最后一个串口号
+            comboBox_serialNumber.SelectedIndex = comboBox_serialNumber.Items.Count - 1;
             
             //枚举波特率
             string[] baudrates =
@@ -97,10 +122,10 @@ namespace Serial
             };
             foreach(string baud in baudrates)
             {
-                comboBox2.Items.Add(baud);
+                comboBox_baud.Items.Add(baud);
             }
-            //comboBox2.SelectedIndex = 0;
-            comboBox2.SelectedIndex = comboBox2.Items.Count - 1;
+            //comboBox_baud.SelectedIndex = 0;
+            comboBox_baud.SelectedIndex = comboBox_baud.Items.Count - 1;
 
 
             String[] CommandName =
@@ -114,9 +139,7 @@ namespace Serial
                 dataGridView_cmd.Rows[i].Cells[0].Value = name;
             }
             
-
-
-            //不可用窗体里的定时器控件，因为对控件的操作比如定时器的启动和停止，需要在UI线程操作，在串口接收的函数里并不是UI线程，无法操作
+            //不可以用窗体里的定时器控件，因为对控件的操作比如定时器的启动和停止，需要在UI线程操作，在串口接收的函数里并不是UI线程在执行，无法操作
 
             //定时一秒的串口接收等待时间
             timer_serial = new System.Timers.Timer(1000);
@@ -128,6 +151,7 @@ namespace Serial
             //设置是执行一次（false）还是一直执行(true)，默认为true
             timer_serial.AutoReset = false;
 
+            //每一个列表一个Table类变量。
             tableCmd = new Table(mdbPath, tableNameCmd, dataGridView_c, null);
             tableAccount = new Table(mdbPath, tableNameAccount, dataGridView_a, null);
             tableIncome = new Table(mdbPath, tableNameIncome, dataGridView_i,chart1);
@@ -143,7 +167,7 @@ namespace Serial
             tableCmd.ReadFromAccess();
             tableDeviceRecord.ReadFromAccess();
 
-
+            //将分页框和类的变量绑定
             tabPageChart.Tag = tableIncome;
             tabPageAccount.Tag = tableAccount;
             tabPageCmd.Tag = tableCmd;
@@ -152,7 +176,6 @@ namespace Serial
             tabPagePrice.Tag = tablePrice;
             tabPageIncome.Tag = tableIncome;
 
-            
         }
 
         private void MessageProcess(Boolean isSend, String[] text)
@@ -166,15 +189,16 @@ namespace Serial
             {
                 //处理收到短信 
                 /*
-                "来自:" + message[0] 
-                "日期:" + message[1] 
-                "时间:" + message[2] 
-                "内容:" + message[3]
+                "来自:" + text[0] 
+                "日期:" + text[1] 
+                "时间:" + text[2] 
+                "内容:" + text[3]
                 */
                 foreach (KeyValuePair<string, string> ky in target)
                 {
                     if (ky.Value.Equals(text[0]))
                     {
+                        //按照数据库中的列名顺序（忽略第一个ID列）
                         String[] temp =
                         {
                             ky.Key,
@@ -184,6 +208,7 @@ namespace Serial
                             text[2],
                         };
                         tableCmd.addNew(temp);
+                        break;
                     }
                     else
                     {
@@ -195,15 +220,15 @@ namespace Serial
                 //dataUpdate();
             }
         }
-        public enum UpdateUIwhich
-        {
-            TextboxSend,
-            TextboxRecv,
-            TextboxSerial,
-        }
+
+        
+        /// <summary>
+        /// 更新UI界面的内容
+        /// </summary>
+        /// <param name="which"></param>
+        /// <param name="str"></param>
         private void UpdateUI(UpdateUIwhich which, String str)
         {
-            textBox_serialDebug.Text += str + "\r\n-----------\r\n";
             switch(which)
             {
                 case UpdateUIwhich.TextboxRecv:
@@ -233,13 +258,13 @@ namespace Serial
                     btn_sendMessage.Text = "发送短信";
                     break;
                 case UpdateUIwhich.TextboxSerial:
+                    textBox_serialDebug.Text += str + "\r\n-----------\r\n";
                     break;
             }
         }
    
         private void btn_sendMessage_Click(object sender, EventArgs e)
         {
-            
             btn_sendMessage.Enabled = false;
             btn_command.Enabled = false;
             comboBox3.Enabled = false;
@@ -275,12 +300,12 @@ namespace Serial
                     label_state_serial.Text = "串口状态：已断开";
                     btn_connect.Text = "连接串口";
 
-                    comboBox1.Enabled = true;
-                    comboBox2.Enabled = true;
+                    comboBox_serialNumber.Enabled = true;
+                    comboBox_baud.Enabled = true;
                 }
                 else
                 {
-                    serialPort1.PortName = comboBox1.SelectedItem.ToString();
+                    serialPort1.PortName = comboBox_serialNumber.SelectedItem.ToString();
                     serialPort1.Open();
                     label_state_serial.Text = "串口状态：已连接";
                     btn_connect.Text = "断开串口";
@@ -288,9 +313,8 @@ namespace Serial
                     gsm = new GSM(serialPort1, interfaceUpdataHandle);
                     gsmSerialProcess = gsm.GsmSerialHandle;
 
-                    comboBox1.Enabled = false;
-                    comboBox2.Enabled = false;
-
+                    comboBox_serialNumber.Enabled = false;
+                    comboBox_baud.Enabled = false;
                 }
             }catch (Exception ex)
             {
@@ -316,10 +340,11 @@ namespace Serial
         private Boolean isReceiving = false;
         private void timer_serial_Tick(object sender, EventArgs e)
         {
+            //时间到后算是接收完成
             isReceiving = false;
             Console.Out.WriteLine("串口数据接收完成");
 
-            //将收到的串口数据委托给GSM类处理
+            //将这段定时的时间内收到的串口数据委托给GSM类处理
             this.BeginInvoke(gsmSerialProcess, recvBuf);
         }
         /// <summary>
@@ -336,7 +361,7 @@ namespace Serial
             {
                 isReceiving = true;
                 recvBuf = "";
-
+                //启动定时器计时
                 timer_serial.Enabled = true;
 
                 Console.Out.WriteLine("串口有新数据到达，开始接收");
@@ -344,7 +369,7 @@ namespace Serial
             foreach (Byte b in buf)
             {
                 //Console.Out.WriteLine(b);
-                recvBuf += Convert.ToChar(b);// == '\n' ? '@' : Convert.ToChar(b);
+                recvBuf += Convert.ToChar(b);// == '\n' ? '@' : Convert.ToChar(b);//如果是回车的话用@代替，便于调试
             }
         }
         private void readAccess()
@@ -389,7 +414,6 @@ namespace Serial
             }
            
         }
-
         private void timer_m_Tick(object sender, EventArgs e)
         {
             if (M_State)
@@ -420,7 +444,9 @@ namespace Serial
             if (tabControl1.SelectedTab.Tag != null)
             {
                 ((Table)tabControl1.SelectedTab.Tag).UpdateToAccess();
-                if (((Table)tabControl1.SelectedTab.Tag).tableName=="deviceSIM")
+
+                //如果改动的是Sim号码配对那一页
+                if (((Table)tabControl1.SelectedTab.Tag).tableName== tableNameDeviceSIM)
                 {
                     RefreashTarget();
                 }
@@ -459,6 +485,23 @@ namespace Serial
             {
                 btn_savedata.Enabled = false;
             }
+        }
+
+        private void timer_cur_Tick(object sender, EventArgs e)
+        {
+            label_curTime.Text = "当前时间：" + DateTime.Now.ToLocalTime().ToString();
+        }
+
+        private void btn_delMessage_Click(object sender, EventArgs e)
+        {
+            if (serialPort1.IsOpen)
+            {
+                gsm.deleteMessage();
+            }
+            else
+            {
+                MessageBox.Show("请先连接串口", "温馨提示");
+            }   
         }
     }
 }

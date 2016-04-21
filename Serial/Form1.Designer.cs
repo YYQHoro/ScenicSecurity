@@ -41,9 +41,9 @@
             System.Windows.Forms.GroupBox groupBox3;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.GroupBox groupBox6;
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.textBox_message_recv = new System.Windows.Forms.TextBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -74,14 +74,14 @@
             this.btn_connect = new System.Windows.Forms.Button();
             this.btn_send = new System.Windows.Forms.Button();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBox_serialNumber = new System.Windows.Forms.ComboBox();
             this.label_state_serial = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btn_sendMessage = new System.Windows.Forms.Button();
             this.textBox_messageText = new System.Windows.Forms.TextBox();
             this.textBox_number = new System.Windows.Forms.TextBox();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.comboBox_baud = new System.Windows.Forms.ComboBox();
             this.btn_command = new System.Windows.Forms.Button();
             this.textBox_command = new System.Windows.Forms.TextBox();
             this.timer_m = new System.Windows.Forms.Timer(this.components);
@@ -91,6 +91,9 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label_comm_back = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.label_curTime = new System.Windows.Forms.Label();
+            this.timer_cur = new System.Windows.Forms.Timer(this.components);
+            this.btn_delMessage = new System.Windows.Forms.Button();
             label = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -294,7 +297,7 @@
             groupBox3.Controls.Add(this.label_m_time);
             groupBox3.Location = new System.Drawing.Point(165, 13);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new System.Drawing.Size(175, 84);
+            groupBox3.Size = new System.Drawing.Size(159, 84);
             groupBox3.TabIndex = 15;
             groupBox3.TabStop = false;
             groupBox3.Text = "发动机运行时间";
@@ -438,7 +441,6 @@
             // 
             // dataGridView_d
             // 
-            this.dataGridView_d.AllowUserToAddRows = false;
             this.dataGridView_d.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView_d.Location = new System.Drawing.Point(0, 0);
             this.dataGridView_d.Name = "dataGridView_d";
@@ -446,6 +448,7 @@
             this.dataGridView_d.Size = new System.Drawing.Size(475, 303);
             this.dataGridView_d.TabIndex = 8;
             this.dataGridView_d.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
+            this.dataGridView_d.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             this.dataGridView_d.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             // 
             // tabPageSim
@@ -531,23 +534,23 @@
             // 
             // chart1
             // 
-            chartArea4.Area3DStyle.Enable3D = true;
-            chartArea4.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
-            chartArea4.Area3DStyle.PointDepth = 75;
-            chartArea4.Area3DStyle.WallWidth = 1;
-            chartArea4.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
-            legend4.Name = "Legend1";
-            this.chart1.Legends.Add(legend4);
+            chartArea2.Area3DStyle.Enable3D = true;
+            chartArea2.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
+            chartArea2.Area3DStyle.PointDepth = 75;
+            chartArea2.Area3DStyle.WallWidth = 1;
+            chartArea2.BackColor = System.Drawing.Color.Gainsboro;
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            series4.ChartArea = "ChartArea1";
-            series4.CustomProperties = "EmptyPointValue=Zero";
-            series4.Legend = "Legend1";
-            series4.Name = "营业额";
-            series4.YValuesPerPoint = 4;
-            this.chart1.Series.Add(series4);
+            series2.ChartArea = "ChartArea1";
+            series2.CustomProperties = "EmptyPointValue=Zero";
+            series2.Legend = "Legend1";
+            series2.Name = "营业额";
+            series2.YValuesPerPoint = 4;
+            this.chart1.Series.Add(series2);
             this.chart1.Size = new System.Drawing.Size(475, 303);
             this.chart1.TabIndex = 6;
             this.chart1.Text = "chart1";
@@ -577,13 +580,13 @@
             this.btn_send.UseVisualStyleBackColor = true;
             this.btn_send.Click += new System.EventHandler(this.btn_send_Click);
             // 
-            // comboBox1
+            // comboBox_serialNumber
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(70, 13);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(58, 20);
-            this.comboBox1.TabIndex = 10;
+            this.comboBox_serialNumber.FormattingEnabled = true;
+            this.comboBox_serialNumber.Location = new System.Drawing.Point(70, 13);
+            this.comboBox_serialNumber.Name = "comboBox_serialNumber";
+            this.comboBox_serialNumber.Size = new System.Drawing.Size(58, 20);
+            this.comboBox_serialNumber.TabIndex = 10;
             // 
             // label_state_serial
             // 
@@ -596,6 +599,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btn_delMessage);
             this.groupBox1.Controls.Add(groupBox5);
             this.groupBox1.Controls.Add(this.btn_sendMessage);
             this.groupBox1.Controls.Add(label8);
@@ -605,13 +609,13 @@
             this.groupBox1.Controls.Add(this.textBox_number);
             this.groupBox1.Controls.Add(label5);
             this.groupBox1.Controls.Add(this.comboBox3);
-            this.groupBox1.Controls.Add(this.comboBox2);
+            this.groupBox1.Controls.Add(this.comboBox_baud);
             this.groupBox1.Controls.Add(label);
             this.groupBox1.Controls.Add(this.btn_command);
             this.groupBox1.Controls.Add(this.textBox_command);
             this.groupBox1.Controls.Add(label1);
             this.groupBox1.Controls.Add(this.label_state_serial);
-            this.groupBox1.Controls.Add(this.comboBox1);
+            this.groupBox1.Controls.Add(this.comboBox_serialNumber);
             this.groupBox1.Controls.Add(this.btn_connect);
             this.groupBox1.Location = new System.Drawing.Point(8, 103);
             this.groupBox1.Name = "groupBox1";
@@ -647,19 +651,19 @@
             // comboBox3
             // 
             this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(70, 57);
+            this.comboBox3.Location = new System.Drawing.Point(70, 56);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(75, 20);
             this.comboBox3.TabIndex = 22;
             this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
             // 
-            // comboBox2
+            // comboBox_baud
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(70, 35);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(58, 20);
-            this.comboBox2.TabIndex = 21;
+            this.comboBox_baud.FormattingEnabled = true;
+            this.comboBox_baud.Location = new System.Drawing.Point(70, 35);
+            this.comboBox_baud.Name = "comboBox_baud";
+            this.comboBox_baud.Size = new System.Drawing.Size(58, 20);
+            this.comboBox_baud.TabIndex = 21;
             // 
             // btn_command
             // 
@@ -694,7 +698,7 @@
             this.dataGridView_cmd.Location = new System.Drawing.Point(6, 127);
             this.dataGridView_cmd.Name = "dataGridView_cmd";
             this.dataGridView_cmd.RowTemplate.Height = 23;
-            this.dataGridView_cmd.Size = new System.Drawing.Size(136, 335);
+            this.dataGridView_cmd.Size = new System.Drawing.Size(160, 309);
             this.dataGridView_cmd.TabIndex = 16;
             this.dataGridView_cmd.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView2_CellEndEdit);
             this.dataGridView_cmd.CurrentCellChanged += new System.EventHandler(this.dataGridView2_CurrentCellChanged);
@@ -723,7 +727,7 @@
             this.groupBox4.Controls.Add(this.btn_send);
             this.groupBox4.Location = new System.Drawing.Point(750, 13);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(143, 468);
+            this.groupBox4.Size = new System.Drawing.Size(172, 439);
             this.groupBox4.TabIndex = 17;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "控制命令";
@@ -746,11 +750,37 @@
             this.label3.TabIndex = 17;
             this.label3.Text = "待发送的命令：";
             // 
+            // label_curTime
+            // 
+            this.label_curTime.AutoSize = true;
+            this.label_curTime.Location = new System.Drawing.Point(750, 463);
+            this.label_curTime.Name = "label_curTime";
+            this.label_curTime.Size = new System.Drawing.Size(53, 12);
+            this.label_curTime.TabIndex = 20;
+            this.label_curTime.Text = "当前时间";
+            // 
+            // timer_cur
+            // 
+            this.timer_cur.Enabled = true;
+            this.timer_cur.Interval = 1000;
+            this.timer_cur.Tick += new System.EventHandler(this.timer_cur_Tick);
+            // 
+            // btn_delMessage
+            // 
+            this.btn_delMessage.Location = new System.Drawing.Point(151, 76);
+            this.btn_delMessage.Name = "btn_delMessage";
+            this.btn_delMessage.Size = new System.Drawing.Size(65, 21);
+            this.btn_delMessage.TabIndex = 31;
+            this.btn_delMessage.Text = "清空短信";
+            this.btn_delMessage.UseVisualStyleBackColor = true;
+            this.btn_delMessage.Click += new System.EventHandler(this.btn_delMessage_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(905, 493);
+            this.ClientSize = new System.Drawing.Size(924, 493);
+            this.Controls.Add(this.label_curTime);
             this.Controls.Add(groupBox6);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(groupBox3);
@@ -795,6 +825,7 @@
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -807,7 +838,7 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.DataGridView dataGridView_c;
         private System.Windows.Forms.BindingSource bindingSource1;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBox_serialNumber;
         private System.Windows.Forms.Label label_state_serial;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label2;
@@ -822,7 +853,7 @@
         private System.Windows.Forms.TextBox textBox_command;
         private System.Windows.Forms.TabPage tabPageChart;
         private System.Windows.Forms.TabPage tabPageCmd;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox comboBox_baud;
         private System.Windows.Forms.Button btn_command;
         private System.Windows.Forms.TextBox textBox_number;
         private System.Windows.Forms.ComboBox comboBox3;
@@ -847,6 +878,9 @@
         private System.Windows.Forms.DataGridView dataGridView_s;
         private System.Windows.Forms.TabPage tabPageRecord;
         private System.Windows.Forms.DataGridView dataGridView_r;
+        private System.Windows.Forms.Label label_curTime;
+        private System.Windows.Forms.Timer timer_cur;
+        private System.Windows.Forms.Button btn_delMessage;
     }
 }
 

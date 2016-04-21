@@ -11,17 +11,21 @@ namespace Serial
 {
     class GSM
     {
-        private SerialPort serialPort1;
-        //是否正在发送短信
+        private static SerialPort serialPort;
+
+        /// <summary>
+        /// 是否正在发送短信
+        /// </summary>
         int sendingMessage = 0;
 
         //定义处理 串口数据 的方法的委托类型
         public delegate void HandleSerialRecvDelegate(string str);
         //定义处理 串口数据 的方法的委托对象
         private GSM.HandleSerialRecvDelegate gsmSerialHandle;
-
+        //定义处理 更新主界面UI 的方法的委托对象
         private Form1.HandleInterfaceUpdataDelegate updateMainUI;
-
+        
+        //短信发送超时定时器
         private static System.Timers.Timer timer_message_out;
 
         private string message_number;
@@ -43,7 +47,7 @@ namespace Serial
             }
             else
             {
-                serialPort1 = com;
+                serialPort = com;
                 //创建委托对象
                 gsmSerialHandle = new HandleSerialRecvDelegate(serialRecv);
 
@@ -86,12 +90,13 @@ namespace Serial
                 //包里是短信的内容
                 //package[1]为短信来源信息
                 //+CMGR: "REC READ","+8613377270802","","16/04/19,13:25:39+32"
+                //以逗号来分隔到各个组
                 string[] temp = package[1].Split(',');
                 //去除双引号后同时去除前面的+86
                 message_from = temp[1].Trim('"').Remove(0, 3);
                 message_date = "20"+temp[3].Trim('"');
-                //去除时间后面的+32
-                message_time = temp[4].Trim('"').Remove(temp[4].Length - 4);//.Trim("+32".ToCharArray());
+                //去除双引号后去除时间后面的+32
+                message_time = temp[4].Trim('"').Remove(temp[4].Length - 4);
                 Console.WriteLine("Message_received.");
                 Console.WriteLine("Message_from:" + message_from);
                 Console.WriteLine("Message_date:" + message_date);
@@ -115,7 +120,7 @@ namespace Serial
             {
                 string index = package[0].Split(',')[1];
                 Console.WriteLine("有新短信到达.ID=" + index + "开始获取短信内容：");
-                serialPort1.Write("AT+CMGR=" + index + "\r\n");
+                serialPort.Write("AT+CMGR=" + index + "\r\n");
             }
             else if (package[0].StartsWith("AT+CSCS=\"GSM\""))
             {
@@ -167,9 +172,16 @@ RecvError:
             }
             
         }
+        public void deleteMessage()
+        {
+            if (serialPort.IsOpen)
+            {
+                serialPort.Write("AT+CMGD=1\r\n");
+            }
+        }
         public void sendMessage(String number, String text)
         {
-            if (serialPort1.IsOpen)
+            if (serialPort.IsOpen)
             {
                 switch (sendingMessage)
                 {
@@ -184,26 +196,26 @@ RecvError:
                         Console.Out.WriteLine("进入发短信第一阶段");
                         //进入发短信的第一阶段
                         sendingMessage = 1;
-                        serialPort1.Write("AT+CSCS=\"GSM\"" + "\r\n");
+                        serialPort.Write("AT+CSCS=\"GSM\"" + "\r\n");
                         break;
                     case 1:
                         Console.Out.WriteLine("进入发短信第二阶段");
                         //第二阶段，设置为文本模式
                         sendingMessage = 2;
-                        serialPort1.Write("AT+CMGF=1" + "\r\n");
+                        serialPort.Write("AT+CMGF=1" + "\r\n");
                         break;
                     case 2:
                         Console.Out.WriteLine("进入发短信第三阶段");
                         sendingMessage = 3;
-                        serialPort1.Write("AT+CMGS=\"" + message_number + "\"" + "\r\n");
+                        serialPort.Write("AT+CMGS=\"" + message_number + "\"" + "\r\n");
                         break;
                     case 3:
                         Console.Out.WriteLine("进入发短信第四阶段");
                         sendingMessage = 4;
-                        serialPort1.Write(message_text);
+                        serialPort.Write(message_text);
                         byte[] b = new byte[1];
                         b[0] = 0x1A;
-                        serialPort1.Write(b, 0, 1);
+                        serialPort.Write(b, 0, 1);
                         break;
                     case 4:
                         //发送成功，停止计时
