@@ -19,7 +19,15 @@ namespace Serial
     public partial class Form1 : Form
     {
         private Boolean M_State=false;
-        private DateTime M_Time;
+        //private DateTime M_Time;
+
+        public struct M_Time
+        {
+            public DateTime start;
+            public DateTime end;
+        }
+        
+        public M_Time []m_time;
 
         const String mdbPath = "database.mdb";
         const String tableNameCmd = "cmd";
@@ -90,13 +98,20 @@ namespace Serial
             }
             if (target.Count > 0)
             {
+                comboBox1.Items.Clear();
                 comboBox3.Items.Clear();
                 foreach (KeyValuePair<string, string> ky in target)
                 {
+                    comboBox1.Items.Add(ky.Key);
                     comboBox3.Items.Add(ky.Key);
                 }
                 comboBox3.SelectedIndex = 0;
+                comboBox1.SelectedIndex = 0;
                 textBox_number.Text = target[comboBox3.SelectedItem.ToString()];
+
+                m_time = new M_Time[target.Count];
+                
+                
             }
         }
 
@@ -159,7 +174,7 @@ namespace Serial
             tableDeviceRecord = new Table(mdbPath, tableNameDeviceRecord, dataGridView_r, null);
             tableDeviceSIM= new Table(mdbPath, tableNameDeviceSIM, dataGridView_s, null);
 
-            RefreashTarget();
+            dataGridView_s.DefaultValuesNeeded += DataGridView_s_DefaultValuesNeeded;
 
             tablePrice.ReadFromAccess();
             tableIncome.ReadFromAccess();
@@ -176,6 +191,18 @@ namespace Serial
             tabPagePrice.Tag = tablePrice;
             tabPageIncome.Tag = tableIncome;
 
+            RefreashTarget();
+
+            //启动系统时间更新
+            timer_cur.Enabled = true;
+            tabControl1.SelectedIndex = 5;
+            tabControl1.SelectedIndex = 3;
+        }
+
+        private void DataGridView_s_DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
+        {
+            e.Row.Cells[3].Value = 0;
+            e.Row.Cells[4].Value = "未启动";
         }
 
         private void MessageProcess(Boolean isSend, String[] text)
@@ -276,7 +303,7 @@ namespace Serial
             gsm.sendMessage(textBox_number.Text, textBox_messageText.Text);
             
         }
-        private void changeSkinState(Boolean isSafe)
+        private void changeSkinState(Boolean isSafe,string id)
         {
             if(isSafe)
             {
@@ -285,13 +312,13 @@ namespace Serial
             }
             else
             {
-                label2.Text = "已损";
+                label2.Text = id+"号已损";
                 label2.ForeColor = Color.Red;
             }
         }
 
         private void btn_connect_Click(object sender, EventArgs e)
-        {
+        {  
             try
             {
                 if (serialPort1.IsOpen)
@@ -393,20 +420,64 @@ namespace Serial
         {
             if(serialPort1.IsOpen)
             {
-                if (M_State)
+                if(btn_m_ctl.Text=="启动")
                 {
-                    btn_m_ctl.Text = "启动";
-                    M_State = false;
-                    timer_m.Enabled = false;
+                    //发送启动命令
+                    //textBox_messageText.Text = "改为启动命令的短信内容";
+                    //btn_sendMessage_Click(null, null);
+                    
+                    //启动编辑
+                    dataGridView_s.BeginEdit(false);
+                    dataGridView_s.Rows[comboBox3.SelectedIndex].Cells[4].Value = "已启动";
+                    
+                    //结束编辑
+                    dataGridView_s.EndEdit();
+
+                    m_time[comboBox3.SelectedIndex].start = DateTime.Now;
+                    btn_m_ctl.Text = "停止";
                 }
                 else
                 {
-                    btn_m_ctl.Text = "停止";
-                    M_Time = new DateTime();
-                    label_m_time.Text = M_Time.ToLongTimeString();
-                    M_State = true;
-                    timer_m.Enabled = true;
+                    //发送停止命令
+                    //textBox_messageText.Text = "改为启动命令的短信内容";
+                    //btn_sendMessage_Click(null, null);
+
+                    timer_cur_Tick(null,null);
+
+                    m_time[comboBox3.SelectedIndex].end = DateTime.Now;
+                    String[] temp = new String[]
+                    {
+                        (string)dataGridView_s.Rows[comboBox3.SelectedIndex].Cells[1].Value,
+                        m_time[comboBox3.SelectedIndex].start.ToLongDateString(),
+                        m_time[comboBox3.SelectedIndex].start.ToLongTimeString(),
+                        m_time[comboBox3.SelectedIndex].end.ToLongDateString(),
+                        m_time[comboBox3.SelectedIndex].end.ToLongTimeString(),
+                    };
+
+                    tableDeviceRecord.addNew(temp);
+
+                    UInt64 ini = Convert.ToUInt64(dataGridView_s.Rows[comboBox3.SelectedIndex].Cells[3].Value);
+
+                    ini += (UInt64)(m_time[comboBox3.SelectedIndex].end - m_time[comboBox3.SelectedIndex].start).TotalSeconds;
+
+                    label_m_time.Text = ini.ToString();
+
+                    //启动编辑
+                    dataGridView_s.CurrentCell = dataGridView_s.Rows[comboBox3.SelectedIndex].Cells[4];
+                    dataGridView_s.BeginEdit(false);
+
+                    dataGridView_s.Rows[comboBox3.SelectedIndex].Cells[4].Value = "已停止";
+                    dataGridView_s.Rows[comboBox3.SelectedIndex].Cells[3].Value = ini;
+
+                    //结束编辑
+                    dataGridView_s.EndEdit();
+
+                    AddTodayIncome(Convert.ToUInt64(label_sum.Text));
+
+                    btn_m_ctl.Text = "启动";
+                    
                 }
+                tableDeviceSIM.UpdateToAccess();
             }
             else
             {
@@ -414,15 +485,36 @@ namespace Serial
             }
            
         }
-        private void timer_m_Tick(object sender, EventArgs e)
+        private void AddTodayIncome(UInt64 income)
         {
-            if (M_State)
+            
+            if (dataGridView_i.RowCount != 0)
             {
-                M_Time = M_Time.AddSeconds(1);
-                label_m_time.Text = M_Time.ToLongTimeString();
-            }
-        }
+                if ((String)dataGridView_i.Rows[dataGridView_i.RowCount - 1].Cells[2].Value == DateTime.Today.ToLongDateString())
+                {
+                    UInt64 last = Convert.ToUInt64(dataGridView_i.Rows[dataGridView_i.RowCount - 1].Cells[1].Value);
 
+                    last += income;
+
+                    dataGridView_i.BeginEdit(false);
+                    dataGridView_i.Rows[dataGridView_i.RowCount - 1].Cells[1].Value = last;
+                    dataGridView_i.EndEdit();
+
+                    tableIncome.UpdateToAccess();
+                    tableIncome.updataToChart();
+                    return;
+                }
+            }
+            String[] temp = new String[]
+            {
+                    income.ToString(),
+                    DateTime.Today.ToLongDateString(),
+            };
+            tableIncome.addNew(temp);
+
+            tableIncome.UpdateToAccess();
+            tableIncome.updataToChart();
+        }
         private void dataGridView2_CurrentCellChanged(object sender, EventArgs e)
         {
             label3.Text = "待发送的命令：" + dataGridView_cmd.CurrentRow.Cells[0].Value+"\n附带的参数值："+ dataGridView_cmd.CurrentRow.Cells[1].Value;
@@ -438,7 +530,6 @@ namespace Serial
         {
             textBox_number.Text = target[comboBox3.SelectedItem.ToString()];
         }
-
         private void btn_savedata_Click(object sender, EventArgs e)
         {
             if (tabControl1.SelectedTab.Tag != null)
@@ -457,7 +548,6 @@ namespace Serial
             }
             btn_savedata.Enabled = false;
         }
-
         private void btn_readAccess_Click(object sender, EventArgs e)
         {
             if (tabControl1.SelectedTab.Tag != null)
@@ -490,6 +580,20 @@ namespace Serial
         private void timer_cur_Tick(object sender, EventArgs e)
         {
             label_curTime.Text = "当前时间：" + DateTime.Now.ToLocalTime().ToString();
+
+            UInt64 time = 0;
+            if ((string)dataGridView_s.Rows[comboBox3.SelectedIndex].Cells[4].Value=="已启动")
+            {
+                time = (UInt64)(DateTime.Now - m_time[comboBox3.SelectedIndex].start).TotalSeconds;
+            }
+            else
+            {
+                label_m_time.Text = "0";
+            }
+            UInt64 price = Convert.ToUInt64(dataGridView_d.Rows[comboBox3.SelectedIndex].Cells[2].Value);
+            label_m_time.Text = time.ToString();
+            label_price.Text = price.ToString();
+            label_sum.Text = (time * price).ToString();
         }
 
         private void btn_delMessage_Click(object sender, EventArgs e)
@@ -502,6 +606,24 @@ namespace Serial
             {
                 MessageBox.Show("请先连接串口", "温馨提示");
             }   
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+            comboBox3.SelectedIndex = comboBox1.SelectedIndex;
+            //Console.WriteLine(dataGridView_s.Rows.Count);
+            string state = (string)dataGridView_s.Rows[comboBox3.SelectedIndex].Cells[4].Value;
+            if(state=="已启动")
+            {
+                btn_m_ctl.Text = "停止";
+            }
+            else
+            {
+                btn_m_ctl.Text = "启动";
+            }
+            //Console.WriteLine(state);
+            
         }
     }
 }

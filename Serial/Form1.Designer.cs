@@ -39,11 +39,15 @@
             System.Windows.Forms.Label label7;
             System.Windows.Forms.GroupBox groupBox2;
             System.Windows.Forms.GroupBox groupBox3;
+            System.Windows.Forms.Label label15;
+            System.Windows.Forms.Label label12;
+            System.Windows.Forms.Label label9;
+            System.Windows.Forms.Label label_m_ID;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.GroupBox groupBox6;
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.textBox_message_recv = new System.Windows.Forms.TextBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -51,8 +55,13 @@
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.textBox_serialDebug = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.label_sum = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             this.btn_m_ctl = new System.Windows.Forms.Button();
             this.label_m_time = new System.Windows.Forms.Label();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label_price = new System.Windows.Forms.Label();
             this.btn_savedata = new System.Windows.Forms.Button();
             this.btn_readAccess = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -77,6 +86,7 @@
             this.comboBox_serialNumber = new System.Windows.Forms.ComboBox();
             this.label_state_serial = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btn_delMessage = new System.Windows.Forms.Button();
             this.btn_sendMessage = new System.Windows.Forms.Button();
             this.textBox_messageText = new System.Windows.Forms.TextBox();
             this.textBox_number = new System.Windows.Forms.TextBox();
@@ -84,7 +94,6 @@
             this.comboBox_baud = new System.Windows.Forms.ComboBox();
             this.btn_command = new System.Windows.Forms.Button();
             this.textBox_command = new System.Windows.Forms.TextBox();
-            this.timer_m = new System.Windows.Forms.Timer(this.components);
             this.dataGridView_cmd = new System.Windows.Forms.DataGridView();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -93,7 +102,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label_curTime = new System.Windows.Forms.Label();
             this.timer_cur = new System.Windows.Forms.Timer(this.components);
-            this.btn_delMessage = new System.Windows.Forms.Button();
             label = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -104,6 +112,10 @@
             label7 = new System.Windows.Forms.Label();
             groupBox2 = new System.Windows.Forms.GroupBox();
             groupBox3 = new System.Windows.Forms.GroupBox();
+            label15 = new System.Windows.Forms.Label();
+            label12 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
+            label_m_ID = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             groupBox6 = new System.Windows.Forms.GroupBox();
             groupBox5.SuspendLayout();
@@ -275,36 +287,96 @@
             groupBox2.Controls.Add(this.label2);
             groupBox2.Location = new System.Drawing.Point(8, 9);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new System.Drawing.Size(151, 88);
+            groupBox2.Size = new System.Drawing.Size(235, 88);
             groupBox2.TabIndex = 14;
             groupBox2.TabStop = false;
-            groupBox2.Text = "系统外壳状态";
+            groupBox2.Text = "设备安全状态";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("宋体", 42F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label2.ForeColor = System.Drawing.Color.Lime;
             this.label2.Location = new System.Drawing.Point(9, 17);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(136, 56);
+            this.label2.Size = new System.Drawing.Size(220, 56);
             this.label2.TabIndex = 0;
             this.label2.Text = "安全";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(label15);
+            groupBox3.Controls.Add(this.label_sum);
+            groupBox3.Controls.Add(this.label13);
+            groupBox3.Controls.Add(label12);
+            groupBox3.Controls.Add(this.label11);
             groupBox3.Controls.Add(this.btn_m_ctl);
             groupBox3.Controls.Add(this.label_m_time);
-            groupBox3.Location = new System.Drawing.Point(165, 13);
+            groupBox3.Controls.Add(label9);
+            groupBox3.Controls.Add(this.comboBox1);
+            groupBox3.Controls.Add(label_m_ID);
+            groupBox3.Controls.Add(this.label_price);
+            groupBox3.Location = new System.Drawing.Point(255, 9);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new System.Drawing.Size(159, 84);
+            groupBox3.Size = new System.Drawing.Size(648, 89);
             groupBox3.TabIndex = 15;
             groupBox3.TabStop = false;
-            groupBox3.Text = "发动机运行时间";
+            groupBox3.Text = "收费情况";
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Font = new System.Drawing.Font("宋体", 15F);
+            label15.Location = new System.Drawing.Point(451, 17);
+            label15.Name = "label15";
+            label15.Size = new System.Drawing.Size(49, 20);
+            label15.TabIndex = 30;
+            label15.Text = "合计";
+            // 
+            // label_sum
+            // 
+            this.label_sum.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_sum.ForeColor = System.Drawing.Color.Red;
+            this.label_sum.Location = new System.Drawing.Point(426, 36);
+            this.label_sum.Name = "label_sum";
+            this.label_sum.Size = new System.Drawing.Size(99, 34);
+            this.label_sum.TabIndex = 29;
+            this.label_sum.Text = "0";
+            this.label_sum.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("宋体", 18F);
+            this.label13.Location = new System.Drawing.Point(398, 44);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(22, 24);
+            this.label13.TabIndex = 28;
+            this.label13.Text = "=";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new System.Drawing.Font("宋体", 15F);
+            label12.Location = new System.Drawing.Point(255, 17);
+            label12.Name = "label12";
+            label12.Size = new System.Drawing.Size(159, 20);
+            label12.TabIndex = 27;
+            label12.Text = "单价（元/小时）";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("宋体", 18F);
+            this.label11.Location = new System.Drawing.Point(225, 40);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(34, 24);
+            this.label11.TabIndex = 26;
+            this.label11.Text = "×";
             // 
             // btn_m_ctl
             // 
-            this.btn_m_ctl.Location = new System.Drawing.Point(36, 54);
+            this.btn_m_ctl.Location = new System.Drawing.Point(567, 12);
             this.btn_m_ctl.Name = "btn_m_ctl";
             this.btn_m_ctl.Size = new System.Drawing.Size(75, 23);
             this.btn_m_ctl.TabIndex = 2;
@@ -315,13 +387,55 @@
             // label_m_time
             // 
             this.label_m_time.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label_m_time.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-            this.label_m_time.Location = new System.Drawing.Point(6, 17);
+            this.label_m_time.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.label_m_time.Location = new System.Drawing.Point(113, 37);
             this.label_m_time.Name = "label_m_time";
-            this.label_m_time.Size = new System.Drawing.Size(139, 34);
-            this.label_m_time.TabIndex = 1;
+            this.label_m_time.Size = new System.Drawing.Size(117, 34);
+            this.label_m_time.TabIndex = 25;
             this.label_m_time.Text = "0";
             this.label_m_time.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Font = new System.Drawing.Font("宋体", 15F);
+            label9.Location = new System.Drawing.Point(109, 17);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(129, 20);
+            label9.TabIndex = 24;
+            label9.Text = "当前使用时长";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.Font = new System.Drawing.Font("宋体", 15F);
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(4, 40);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(106, 28);
+            this.comboBox1.TabIndex = 23;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // label_m_ID
+            // 
+            label_m_ID.AutoSize = true;
+            label_m_ID.Font = new System.Drawing.Font("宋体", 15F);
+            label_m_ID.Location = new System.Drawing.Point(32, 17);
+            label_m_ID.Name = "label_m_ID";
+            label_m_ID.Size = new System.Drawing.Size(49, 20);
+            label_m_ID.TabIndex = 3;
+            label_m_ID.Text = "设备";
+            // 
+            // label_price
+            // 
+            this.label_price.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label_price.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+            this.label_price.Location = new System.Drawing.Point(265, 36);
+            this.label_price.Name = "label_price";
+            this.label_price.Size = new System.Drawing.Size(127, 34);
+            this.label_price.TabIndex = 1;
+            this.label_price.Text = "0";
+            this.label_price.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label4
             // 
@@ -534,23 +648,23 @@
             // 
             // chart1
             // 
-            chartArea2.Area3DStyle.Enable3D = true;
-            chartArea2.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
-            chartArea2.Area3DStyle.PointDepth = 75;
-            chartArea2.Area3DStyle.WallWidth = 1;
-            chartArea2.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea7.Area3DStyle.Enable3D = true;
+            chartArea7.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
+            chartArea7.Area3DStyle.PointDepth = 75;
+            chartArea7.Area3DStyle.WallWidth = 1;
+            chartArea7.BackColor = System.Drawing.Color.Gainsboro;
+            chartArea7.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea7);
+            legend7.Name = "Legend1";
+            this.chart1.Legends.Add(legend7);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.CustomProperties = "EmptyPointValue=Zero";
-            series2.Legend = "Legend1";
-            series2.Name = "营业额";
-            series2.YValuesPerPoint = 4;
-            this.chart1.Series.Add(series2);
+            series7.ChartArea = "ChartArea1";
+            series7.CustomProperties = "EmptyPointValue=Zero";
+            series7.Legend = "Legend1";
+            series7.Name = "营业额";
+            series7.YValuesPerPoint = 4;
+            this.chart1.Series.Add(series7);
             this.chart1.Size = new System.Drawing.Size(475, 303);
             this.chart1.TabIndex = 6;
             this.chart1.Text = "chart1";
@@ -562,7 +676,7 @@
             // 
             // btn_connect
             // 
-            this.btn_connect.Location = new System.Drawing.Point(134, 11);
+            this.btn_connect.Location = new System.Drawing.Point(148, 11);
             this.btn_connect.Name = "btn_connect";
             this.btn_connect.Size = new System.Drawing.Size(68, 23);
             this.btn_connect.TabIndex = 0;
@@ -624,6 +738,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "通讯";
             // 
+            // btn_delMessage
+            // 
+            this.btn_delMessage.Location = new System.Drawing.Point(151, 76);
+            this.btn_delMessage.Name = "btn_delMessage";
+            this.btn_delMessage.Size = new System.Drawing.Size(65, 21);
+            this.btn_delMessage.TabIndex = 31;
+            this.btn_delMessage.Text = "清空短信";
+            this.btn_delMessage.UseVisualStyleBackColor = true;
+            this.btn_delMessage.Click += new System.EventHandler(this.btn_delMessage_Click);
+            // 
             // btn_sendMessage
             // 
             this.btn_sendMessage.Location = new System.Drawing.Point(151, 118);
@@ -650,6 +774,7 @@
             // 
             // comboBox3
             // 
+            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox3.FormattingEnabled = true;
             this.comboBox3.Location = new System.Drawing.Point(70, 56);
             this.comboBox3.Name = "comboBox3";
@@ -682,11 +807,6 @@
             this.textBox_command.Size = new System.Drawing.Size(100, 21);
             this.textBox_command.TabIndex = 18;
             this.textBox_command.Text = "AT";
-            // 
-            // timer_m
-            // 
-            this.timer_m.Interval = 1000;
-            this.timer_m.Tick += new System.EventHandler(this.timer_m_Tick);
             // 
             // dataGridView_cmd
             // 
@@ -725,7 +845,8 @@
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.dataGridView_cmd);
             this.groupBox4.Controls.Add(this.btn_send);
-            this.groupBox4.Location = new System.Drawing.Point(750, 13);
+            this.groupBox4.Enabled = false;
+            this.groupBox4.Location = new System.Drawing.Point(909, 12);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(172, 439);
             this.groupBox4.TabIndex = 17;
@@ -753,7 +874,7 @@
             // label_curTime
             // 
             this.label_curTime.AutoSize = true;
-            this.label_curTime.Location = new System.Drawing.Point(750, 463);
+            this.label_curTime.Location = new System.Drawing.Point(750, 469);
             this.label_curTime.Name = "label_curTime";
             this.label_curTime.Size = new System.Drawing.Size(53, 12);
             this.label_curTime.TabIndex = 20;
@@ -761,25 +882,14 @@
             // 
             // timer_cur
             // 
-            this.timer_cur.Enabled = true;
             this.timer_cur.Interval = 1000;
             this.timer_cur.Tick += new System.EventHandler(this.timer_cur_Tick);
-            // 
-            // btn_delMessage
-            // 
-            this.btn_delMessage.Location = new System.Drawing.Point(151, 76);
-            this.btn_delMessage.Name = "btn_delMessage";
-            this.btn_delMessage.Size = new System.Drawing.Size(65, 21);
-            this.btn_delMessage.TabIndex = 31;
-            this.btn_delMessage.Text = "清空短信";
-            this.btn_delMessage.UseVisualStyleBackColor = true;
-            this.btn_delMessage.Click += new System.EventHandler(this.btn_delMessage_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(924, 493);
+            this.ClientSize = new System.Drawing.Size(1093, 493);
             this.Controls.Add(this.label_curTime);
             this.Controls.Add(groupBox6);
             this.Controls.Add(this.groupBox4);
@@ -800,8 +910,8 @@
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
             groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
             groupBox6.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPageCmd.ResumeLayout(false);
@@ -843,8 +953,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btn_m_ctl;
-        private System.Windows.Forms.Label label_m_time;
-        private System.Windows.Forms.Timer timer_m;
+        private System.Windows.Forms.Label label_price;
         private System.Windows.Forms.DataGridView dataGridView_cmd;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
@@ -881,6 +990,11 @@
         private System.Windows.Forms.Label label_curTime;
         private System.Windows.Forms.Timer timer_cur;
         private System.Windows.Forms.Button btn_delMessage;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label_sum;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label_m_time;
     }
 }
 

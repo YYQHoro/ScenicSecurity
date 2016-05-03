@@ -13,7 +13,7 @@ namespace Serial
     class DataBase
     {
         /// <summary>
-        /// 按照列来把数据到Access数据库
+        /// 按照列来把数据插入到Access数据库
         /// </summary>
         /// <param name="mdbPath"></param>
         /// <param name="tableName">表名</param>
@@ -69,5 +69,39 @@ namespace Serial
             }
             return result;
         }
+        /*
+        public static Boolean UpdateDataByColumns(string mdbPath, string tableName, string FromListName,string FromListValue,string ToListName,string ToListValue)
+        {
+            Boolean result = false;
+            try
+            {
+                //1、建立连接    
+                string strConn
+                    = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdbPath + ";";
+                OleDbConnection odcConnection = new OleDbConnection(strConn);
+                //2、打开连接    
+                odcConnection.Open();
+                //建立SQL查询
+                OleDbCommand odCommand = odcConnection.CreateCommand();
+
+                //同时插入一行中的多个字段时，每个字段的值用‘ 包起来
+                odCommand.CommandText = "update " + tableName + " SET " + ToListName + " = '" + ToListValue + "' where " + FromListName + " = '" + FromListValue + "'";
+
+                Console.Out.WriteLine("SQL语句构造完成：\r\n"+ odCommand.CommandText+"\r\n");
+
+                odCommand.ExecuteNonQuery();
+
+                odcConnection.Close();
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                result = false;
+                Console.WriteLine(ex.Message);
+
+            }
+            return result;
+        }
+        */
     }
 }

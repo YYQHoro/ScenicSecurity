@@ -41,11 +41,6 @@ namespace Serial
         /// </summary>
         private OleDbDataAdapter da;
 
-        /// <summary>
-        /// BindingSource,使内存中的表DataTable与窗体的显示控件datagridview通讯
-        /// </summary>
-        private BindingSource bs;
-
         public DataGridView dataGridView;
         public Chart chart;
 
@@ -66,6 +61,8 @@ namespace Serial
 
                 //设置列宽
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+
+                
             }
 
         }
@@ -88,7 +85,7 @@ namespace Serial
 
                 //填充内存表
                 da.Fill(dt);
-
+                
                 //获取每列的标题名，从1开始跳过首列（ID主键列）
                 columnsName = new string[dt.Columns.Count - 1];
                 for (int i = 1; i < dt.Columns.Count; i++)
@@ -97,14 +94,17 @@ namespace Serial
                     //Console.Out.WriteLine(columnsName[i - 1]);
                 }
 
-                //新建bindingsource
-                bs = new BindingSource();
-
-                //bindingsource绑定内存表
-                bs.DataSource = dt;
-
                 //datagridview绑定bindingsource，至此dataGridView就自动显示内容了
-                dataGridView.DataSource = bs;
+                dataGridView.DataSource = dt;
+
+                //datagridview绑定内存中的表DataTable，至此dataGridView就自动显示内容了
+                //dataGridView.DataSource = dt;
+                
+                for (int i = 0; i < dataGridView.Columns.Count; i++) {
+                    dataGridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+                }
+
+                //dataGridView.CurrentCell = dataGridView.Rows[0].Cells[0];
 
                 //更新图表（如果有）
                 updataToChart();
@@ -122,7 +122,8 @@ namespace Serial
                 //调用一下OleDbCommandBuilder的构造方法，不然会无法自动生成SQL语句
                 new OleDbCommandBuilder(da);
                 //用dataadapter的update方法自动更新access数据库
-                da.Update((DataTable)bs.DataSource);
+
+                da.Update((DataTable)dataGridView.DataSource);
                 hasChanged = false;
             }
         }
