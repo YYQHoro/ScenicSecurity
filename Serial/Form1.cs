@@ -435,7 +435,7 @@ namespace Serial
                     case UpdateUIwhich.LableSafe:
                         if (str != "安全")
                         {
-                            label2.Text = str + "号已损";
+                            label2.Text = "机" + str + "已损";
                             label2.ForeColor = Color.Red;
                         }
                         else
