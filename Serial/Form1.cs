@@ -25,6 +25,7 @@ namespace Serial
         {
             public DateTime start;
             public DateTime end;
+            
             public bool isBroken;
         }
 
@@ -327,14 +328,7 @@ namespace Serial
                         }
                         else if (text[3].Contains("stop"))
                         {
-                            m_time[i].isBroken = true;
-                            string[] t = new string[]
-                            {
-                                ky.Key,
-                                DateTime.Now.ToLongDateString(),
-                                DateTime.Now.ToLongTimeString(),
-                            };
-                            tableDeviceBreak.addNew(t);
+                            StopConsume(i, false);
                         }
                         else if (text[3].Contains("Low"))
                         {
@@ -572,9 +566,12 @@ namespace Serial
             {
                 if (btn_m_ctl.Text == "启动")
                 {
+
+                    label_m_time.Text = label_sum.Text = "0";
+
                     //发送启动命令
                     textBox_messageText.Text = "OPENOPEN";
-                    btn_sendMessage_Click(null, null);
+                    //btn_sendMessage_Click(null, null);
 
                     dataGridView_sim.CurrentCell = dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4];
                     try
@@ -598,50 +595,9 @@ namespace Serial
                 {
                     //发送停止命令
                     textBox_messageText.Text = "stop";
-                    btn_sendMessage_Click(null, null);
+                    //btn_sendMessage_Click(null, null);
 
-                    timer_cur_Tick(null, null);
-
-                    m_time[comboBox3.SelectedIndex].end = DateTime.Now;
-
-
-                    UInt64 ini = Convert.ToUInt64(dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[3].Value);
-
-                    ini += (UInt64)(m_time[comboBox3.SelectedIndex].end - m_time[comboBox3.SelectedIndex].start).TotalSeconds;
-
-                    label_m_time.Text = ini.ToString();
-                    try
-                    {
-                        //启动编辑
-                        dataGridView_sim.CurrentCell = dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4];
-                        dataGridView_sim.BeginEdit(false);
-
-                        dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4].Value = "已停止";
-                        dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[3].Value = ini;
-
-                        //结束编辑
-                        dataGridView_sim.EndEdit();
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-
-                    String[] temp = new String[]
-                    {
-                        (string)dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[1].Value,
-                        m_time[comboBox3.SelectedIndex].start.ToLongDateString(),
-                        m_time[comboBox3.SelectedIndex].start.ToLongTimeString(),
-                        m_time[comboBox3.SelectedIndex].end.ToLongDateString(),
-                        m_time[comboBox3.SelectedIndex].end.ToLongTimeString(),
-                        ini.ToString(),
-
-                    };
-                    tableDeviceRecord.addNew(temp);
-
-                    AddTodayIncome(Convert.ToUInt64(label_sum.Text));
-
-                    btn_m_ctl.Text = "启动";
+                    StopConsume(comboBox3.SelectedIndex, true);
 
                 }
                 tableDeviceSIM.UpdateToAccess();
@@ -649,6 +605,77 @@ namespace Serial
             else
             {
                 MessageBox.Show("请先连接设备", "温馨提示");
+            }
+
+        }
+        public void StopConsume(int DeviceID, bool isStop)
+        {
+            if (isStop)
+            {
+                timer_cur_Tick(null, null);
+
+                m_time[DeviceID].end = DateTime.Now;
+
+                UInt64 ini = Convert.ToUInt64(dataGridView_sim.Rows[DeviceID].Cells[3].Value);
+
+                ini += (UInt64)(m_time[DeviceID].end - m_time[DeviceID].start).TotalSeconds;
+                Console.WriteLine("ini:" + ini);
+                //label_m_time.Text = ini.ToString();
+                try
+                {
+                    //启动编辑
+                    dataGridView_sim.CurrentCell = dataGridView_sim.Rows[DeviceID].Cells[4];
+                    dataGridView_sim.BeginEdit(false);
+
+                    dataGridView_sim.Rows[DeviceID].Cells[4].Value = "已停止";
+                    dataGridView_sim.Rows[DeviceID].Cells[3].Value = ini;
+
+                    //结束编辑
+                    dataGridView_sim.EndEdit();
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                String[] temp = new String[]
+                {
+                        (string)dataGridView_sim.Rows[DeviceID].Cells[1].Value,
+                        m_time[DeviceID].start.ToLongDateString(),
+                        m_time[DeviceID].start.ToLongTimeString(),
+                        m_time[DeviceID].end.ToLongDateString(),//停止
+                        m_time[DeviceID].end.ToLongTimeString(),
+                        label_m_time.Text,
+
+                };
+                tableDeviceRecord.addNew(temp);
+
+                AddTodayIncome(Convert.ToUInt64(label_sum.Text));
+
+                btn_m_ctl.Text = "启动";
+            }
+            else
+            {
+                timer_cur_Tick(null, null);
+
+                //m_time[comboBox3.SelectedIndex].end = DateTime.Now;
+
+                UInt64 ini = Convert.ToUInt64(dataGridView_sim.Rows[DeviceID].Cells[3].Value);
+
+                ini += (UInt64)(DateTime.Now - m_time[DeviceID].start).TotalSeconds;
+                //label_m_time.Text = ini.ToString();
+
+                String[] temp = new String[]
+                {
+                        (string)dataGridView_sim.Rows[DeviceID].Cells[1].Value,
+                        m_time[DeviceID].start.ToLongDateString(),
+                        m_time[DeviceID].start.ToLongTimeString(),
+                        "暂停",
+                        DateTime.Now.ToLongTimeString(),
+                        label_m_time.Text,
+
+                };
+                tableDeviceRecord.addNew(temp);
             }
 
         }
@@ -781,19 +808,21 @@ namespace Serial
         {
             label_curTime.Text = "当前时间：" + DateTime.Now.ToLocalTime().ToString();
 
-            UInt64 time = 0;
+
             if ((string)dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4].Value == "已启动")
             {
+                UInt64 time = 0;
                 time = (UInt64)(DateTime.Now - m_time[comboBox3.SelectedIndex].start).TotalSeconds;
+                UInt64 price = Convert.ToUInt64(dataGridView_price.Rows[comboBox3.SelectedIndex].Cells[2].Value);
+                label_m_time.Text = time.ToString();
+                label_price.Text = price.ToString();
+                label_sum.Text = (time * price).ToString();
             }
-            else
-            {
-                label_m_time.Text = "0";
-            }
-            UInt64 price = Convert.ToUInt64(dataGridView_price.Rows[comboBox3.SelectedIndex].Cells[2].Value);
-            label_m_time.Text = time.ToString();
-            label_price.Text = price.ToString();
-            label_sum.Text = (time * price).ToString();
+            //else
+            //{
+            //    label_m_time.Text = "0";
+            //}
+
 
             //m_time[1].isBroken = true;
 
@@ -836,6 +865,13 @@ namespace Serial
                     UpdateUI(UpdateUIwhich.LableSafe, (comboBox1.SelectedIndex + 1).ToString());
                 else
                     UpdateUI(UpdateUIwhich.LableSafe, "安全");
+
+                UInt64 time = 0;
+                time = (UInt64)(m_time[comboBox3.SelectedIndex].end - m_time[comboBox3.SelectedIndex].start).TotalSeconds;
+                UInt64 price = Convert.ToUInt64(dataGridView_price.Rows[comboBox3.SelectedIndex].Cells[2].Value);
+                label_m_time.Text = time.ToString();
+                label_price.Text = price.ToString();
+                label_sum.Text = (time * price).ToString();
             }
 
             //Console.WriteLine(state);
