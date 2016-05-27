@@ -113,8 +113,8 @@ namespace Serial
                 Console.WriteLine("Message_end");
 
                 String comb = message_from + "|" + message_date + "|" + message_time + "|" + message;
-
-                 updateMainUI(Form1.UpdateUIwhich.TextboxRecv, comb);
+                
+                updateMainUI(Form1.UpdateUIwhich.TextboxRecv, comb);
             }
             else if (package[0].StartsWith("+CMTI: \"SM\""))
             {
@@ -176,7 +176,7 @@ RecvError:
         {
             if (serialPort.IsOpen)
             {
-                serialPort.Write("AT+CMGD=1\r\n");
+                serialPort.Write("AT+CMGD=1,4\r\n");
             }
         }
         public void sendMessage(String number, String text)

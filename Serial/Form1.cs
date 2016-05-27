@@ -191,8 +191,8 @@ namespace Serial
             {
                 comboBox_baud.Items.Add(baud);
             }
-            //comboBox_baud.SelectedIndex = 0;
-            comboBox_baud.SelectedIndex = comboBox_baud.Items.Count - 1;
+            comboBox_baud.SelectedIndex = 0;
+            //comboBox_baud.SelectedIndex = comboBox_baud.Items.Count - 1;
             //串口初始化////////////////////////////////////////////////
 
 
@@ -210,7 +210,7 @@ namespace Serial
             //不可以用窗体里的定时器控件，因为对控件的操作比如定时器的启动和停止，需要在UI线程操作，在串口接收的函数里并不是UI线程在执行，无法操作
 
             //定时一秒的串口接收等待时间
-            timer_serial = new System.Timers.Timer(200);
+            timer_serial = new System.Timers.Timer(500);
             //定时十秒的短信发送超时时间
 
             //注册计时器的事件
@@ -344,22 +344,18 @@ namespace Serial
                         }
 
                         break;
-                    }
-                    else
-                    {
-                        textBox_serialDebug.Text += "收到一封短信\r\n";
-                        textBox_serialDebug.Text += "SIM号：" + text[0];
-                        textBox_serialDebug.Text += "内容：" + text[3];
-                        textBox_serialDebug.Text += "\r\n无法为其匹配设备名\r\n";
-                        textBox_serialDebug.Text += "---Error---\r\n";
-                    }
+                        //dataUpdate();
 
+                        //textBox_serialDebug.Text += "收到一封短信\r\n";
+                        //textBox_serialDebug.Text += "SIM号：" + text[0];
+                        //textBox_serialDebug.Text += "内容：" + text[3];
+                        //textBox_serialDebug.Text += "\r\n无法为其匹配设备名\r\n";
+                        //textBox_serialDebug.Text += "---Error---\r\n";
+                    }
                     i++;
                 }
-                //dataUpdate();
             }
         }
-
         public void ShowMessageBox(object text)
         {
             MessageBox.Show((string)text);
@@ -381,7 +377,16 @@ namespace Serial
                 {
                     case UpdateUIwhich.TextboxRecv:
                         String[] message = str.Split('|');
-                        textBox_message_recv.Text += "来自:" + message[0] + "\r\n日期:" + message[1] + "\r\n时间:" + message[2] + "\r\n内容:" + message[3] + "\r\n----------\r\n";
+                        foreach (KeyValuePair<string, string> ky in target)
+                        {
+                            //ky.Value SIM号码
+                            //ky.Key 设备名
+                            if (ky.Value.Equals(message[0]))
+                            {
+                                textBox_message_recv.Text += "来自:" + ky.Key + "\r\n日期:" + message[1] + " " + message[2] + "\r\n内容:" + message[3] + "\r\n----------\r\n";
+                                break;
+                            }
+                        }
                         MessageProcess(false, message);
                         break;
                     case UpdateUIwhich.TextboxSend:
@@ -396,7 +401,7 @@ namespace Serial
                         {
                             textBox_message_send.Text += "-----Message-----\r\n" + temp[0] + "\r\n-----sent-----\r\n";
                             Console.Out.WriteLine("短信发送完成.");
-                            MessageProcess(false, temp);
+                            MessageProcess(true, temp);
                         }
                         else
                         {
@@ -572,13 +577,19 @@ namespace Serial
                     btn_sendMessage_Click(null, null);
 
                     dataGridView_sim.CurrentCell = dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4];
+                    try
+                    {
+                        //启动编辑
+                        dataGridView_sim.BeginEdit(false);
+                        dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4].Value = "已启动";
 
-                    //启动编辑
-                    dataGridView_sim.BeginEdit(false);
-                    dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4].Value = "已启动";
+                        //结束编辑
+                        dataGridView_sim.EndEdit();
+                    }
+                    catch (Exception ex)
+                    {
 
-                    //结束编辑
-                    dataGridView_sim.EndEdit();
+                    }
 
                     m_time[comboBox3.SelectedIndex].start = DateTime.Now;
                     btn_m_ctl.Text = "停止";
@@ -599,17 +610,22 @@ namespace Serial
                     ini += (UInt64)(m_time[comboBox3.SelectedIndex].end - m_time[comboBox3.SelectedIndex].start).TotalSeconds;
 
                     label_m_time.Text = ini.ToString();
+                    try
+                    {
+                        //启动编辑
+                        dataGridView_sim.CurrentCell = dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4];
+                        dataGridView_sim.BeginEdit(false);
 
-                    //启动编辑
-                    dataGridView_sim.CurrentCell = dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4];
-                    dataGridView_sim.BeginEdit(false);
+                        dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4].Value = "已停止";
+                        dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[3].Value = ini;
 
-                    dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4].Value = "已停止";
-                    dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[3].Value = ini;
+                        //结束编辑
+                        dataGridView_sim.EndEdit();
+                    }
+                    catch (Exception ex)
+                    {
 
-                    //结束编辑
-                    dataGridView_sim.EndEdit();
-
+                    }
 
                     String[] temp = new String[]
                     {
@@ -652,10 +668,18 @@ namespace Serial
                     last += income;
 
                     dataGridView_income.CurrentCell = dataGridView_income.Rows[dataGridView_income.RowCount - 1].Cells[1];
+                    try
+                    {
+                        dataGridView_income.BeginEdit(false);
+                        dataGridView_income.Rows[dataGridView_income.RowCount - 1].Cells[1].Value = last;
+                        dataGridView_income.EndEdit();
 
-                    dataGridView_income.BeginEdit(false);
-                    dataGridView_income.Rows[dataGridView_income.RowCount - 1].Cells[1].Value = last;
-                    dataGridView_income.EndEdit();
+                    }
+                    catch (Exception ex)
+                    {
+                        //MessageBox.Show(ex.ToString());
+                    }
+
 
                     tableIncome.UpdateToAccess();
                     tableIncome.updataToChart();
@@ -813,7 +837,7 @@ namespace Serial
                 else
                     UpdateUI(UpdateUIwhich.LableSafe, "安全");
             }
-               
+
             //Console.WriteLine(state);
 
         }
