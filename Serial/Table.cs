@@ -109,6 +109,9 @@ namespace Serial
                 //更新图表（如果有）
                 updataToChart();
             }
+            //设置列宽
+            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+
         }
 
         /// <summary>

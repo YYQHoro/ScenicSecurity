@@ -45,9 +45,9 @@
             System.Windows.Forms.Label label_m_ID;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.GroupBox groupBox6;
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.textBox_message_recv = new System.Windows.Forms.TextBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -55,6 +55,7 @@
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.textBox_serialDebug = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.button_info = new System.Windows.Forms.Button();
             this.label_sum = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -68,15 +69,17 @@
             this.tabPageCmd = new System.Windows.Forms.TabPage();
             this.dataGridView_c = new System.Windows.Forms.DataGridView();
             this.tabPageAccount = new System.Windows.Forms.TabPage();
-            this.dataGridView_a = new System.Windows.Forms.DataGridView();
+            this.dataGridView_yonghu = new System.Windows.Forms.DataGridView();
             this.tabPagePrice = new System.Windows.Forms.TabPage();
-            this.dataGridView_d = new System.Windows.Forms.DataGridView();
+            this.dataGridView_price = new System.Windows.Forms.DataGridView();
             this.tabPageSim = new System.Windows.Forms.TabPage();
-            this.dataGridView_s = new System.Windows.Forms.DataGridView();
+            this.dataGridView_sim = new System.Windows.Forms.DataGridView();
             this.tabPageRecord = new System.Windows.Forms.TabPage();
-            this.dataGridView_r = new System.Windows.Forms.DataGridView();
+            this.dataGridView_record = new System.Windows.Forms.DataGridView();
+            this.tabPageBreak = new System.Windows.Forms.TabPage();
+            this.dataGridView_break = new System.Windows.Forms.DataGridView();
             this.tabPageIncome = new System.Windows.Forms.TabPage();
-            this.dataGridView_i = new System.Windows.Forms.DataGridView();
+            this.dataGridView_income = new System.Windows.Forms.DataGridView();
             this.tabPageChart = new System.Windows.Forms.TabPage();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.serialPort1 = new System.IO.Ports.SerialPort(this.components);
@@ -102,6 +105,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label_curTime = new System.Windows.Forms.Label();
             this.timer_cur = new System.Windows.Forms.Timer(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             label = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -130,15 +134,17 @@
             this.tabPageCmd.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_c)).BeginInit();
             this.tabPageAccount.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_a)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_yonghu)).BeginInit();
             this.tabPagePrice.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_d)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_price)).BeginInit();
             this.tabPageSim.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_s)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_sim)).BeginInit();
             this.tabPageRecord.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_r)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_record)).BeginInit();
+            this.tabPageBreak.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_break)).BeginInit();
             this.tabPageIncome.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_i)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_income)).BeginInit();
             this.tabPageChart.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -186,6 +192,7 @@
             // 
             // groupBox5
             // 
+            groupBox5.Controls.Add(this.button1);
             groupBox5.Controls.Add(tabControl2);
             groupBox5.Location = new System.Drawing.Point(6, 145);
             groupBox5.Name = "groupBox5";
@@ -305,6 +312,7 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(this.button_info);
             groupBox3.Controls.Add(label15);
             groupBox3.Controls.Add(this.label_sum);
             groupBox3.Controls.Add(this.label13);
@@ -322,6 +330,16 @@
             groupBox3.TabIndex = 15;
             groupBox3.TabStop = false;
             groupBox3.Text = "收费情况";
+            // 
+            // button_info
+            // 
+            this.button_info.Location = new System.Drawing.Point(567, 60);
+            this.button_info.Name = "button_info";
+            this.button_info.Size = new System.Drawing.Size(75, 23);
+            this.button_info.TabIndex = 31;
+            this.button_info.Text = "查看情况";
+            this.button_info.UseVisualStyleBackColor = true;
+            this.button_info.Click += new System.EventHandler(this.button_info_Click);
             // 
             // label15
             // 
@@ -453,7 +471,7 @@
             groupBox6.Controls.Add(this.tabControl1);
             groupBox6.Location = new System.Drawing.Point(249, 104);
             groupBox6.Name = "groupBox6";
-            groupBox6.Size = new System.Drawing.Size(495, 377);
+            groupBox6.Size = new System.Drawing.Size(654, 377);
             groupBox6.TabIndex = 19;
             groupBox6.TabStop = false;
             groupBox6.Text = "数据分析";
@@ -486,12 +504,13 @@
             this.tabControl1.Controls.Add(this.tabPagePrice);
             this.tabControl1.Controls.Add(this.tabPageSim);
             this.tabControl1.Controls.Add(this.tabPageRecord);
+            this.tabControl1.Controls.Add(this.tabPageBreak);
             this.tabControl1.Controls.Add(this.tabPageIncome);
             this.tabControl1.Controls.Add(this.tabPageChart);
             this.tabControl1.Location = new System.Drawing.Point(6, 42);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(483, 329);
+            this.tabControl1.Size = new System.Drawing.Size(556, 329);
             this.tabControl1.TabIndex = 18;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -501,7 +520,7 @@
             this.tabPageCmd.Location = new System.Drawing.Point(4, 22);
             this.tabPageCmd.Name = "tabPageCmd";
             this.tabPageCmd.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCmd.Size = new System.Drawing.Size(475, 303);
+            this.tabPageCmd.Size = new System.Drawing.Size(548, 303);
             this.tabPageCmd.TabIndex = 1;
             this.tabPageCmd.Tag = "";
             this.tabPageCmd.Text = "命令记录";
@@ -514,125 +533,144 @@
             this.dataGridView_c.Location = new System.Drawing.Point(0, 0);
             this.dataGridView_c.Name = "dataGridView_c";
             this.dataGridView_c.RowTemplate.Height = 23;
-            this.dataGridView_c.Size = new System.Drawing.Size(475, 303);
+            this.dataGridView_c.Size = new System.Drawing.Size(548, 303);
             this.dataGridView_c.TabIndex = 7;
             this.dataGridView_c.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
             this.dataGridView_c.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             // 
             // tabPageAccount
             // 
-            this.tabPageAccount.Controls.Add(this.dataGridView_a);
+            this.tabPageAccount.Controls.Add(this.dataGridView_yonghu);
             this.tabPageAccount.Location = new System.Drawing.Point(4, 22);
             this.tabPageAccount.Name = "tabPageAccount";
-            this.tabPageAccount.Size = new System.Drawing.Size(475, 303);
+            this.tabPageAccount.Size = new System.Drawing.Size(548, 303);
             this.tabPageAccount.TabIndex = 3;
             this.tabPageAccount.Tag = "";
             this.tabPageAccount.Text = "账户信息";
             this.tabPageAccount.UseVisualStyleBackColor = true;
             // 
-            // dataGridView_a
+            // dataGridView_yonghu
             // 
-            this.dataGridView_a.AllowUserToAddRows = false;
-            this.dataGridView_a.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_a.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView_a.Name = "dataGridView_a";
-            this.dataGridView_a.RowTemplate.Height = 23;
-            this.dataGridView_a.Size = new System.Drawing.Size(475, 303);
-            this.dataGridView_a.TabIndex = 8;
-            this.dataGridView_a.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
-            this.dataGridView_a.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView_yonghu.AllowUserToAddRows = false;
+            this.dataGridView_yonghu.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_yonghu.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView_yonghu.Name = "dataGridView_yonghu";
+            this.dataGridView_yonghu.RowTemplate.Height = 23;
+            this.dataGridView_yonghu.Size = new System.Drawing.Size(548, 303);
+            this.dataGridView_yonghu.TabIndex = 8;
+            this.dataGridView_yonghu.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
+            this.dataGridView_yonghu.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             // 
             // tabPagePrice
             // 
-            this.tabPagePrice.Controls.Add(this.dataGridView_d);
+            this.tabPagePrice.Controls.Add(this.dataGridView_price);
             this.tabPagePrice.Location = new System.Drawing.Point(4, 22);
             this.tabPagePrice.Name = "tabPagePrice";
-            this.tabPagePrice.Size = new System.Drawing.Size(475, 303);
+            this.tabPagePrice.Size = new System.Drawing.Size(548, 303);
             this.tabPagePrice.TabIndex = 2;
             this.tabPagePrice.Tag = "";
             this.tabPagePrice.Text = "单价设定";
             this.tabPagePrice.UseVisualStyleBackColor = true;
             // 
-            // dataGridView_d
+            // dataGridView_price
             // 
-            this.dataGridView_d.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_d.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView_d.Name = "dataGridView_d";
-            this.dataGridView_d.RowTemplate.Height = 23;
-            this.dataGridView_d.Size = new System.Drawing.Size(475, 303);
-            this.dataGridView_d.TabIndex = 8;
-            this.dataGridView_d.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
-            this.dataGridView_d.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
-            this.dataGridView_d.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView_price.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_price.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView_price.Name = "dataGridView_price";
+            this.dataGridView_price.RowTemplate.Height = 23;
+            this.dataGridView_price.Size = new System.Drawing.Size(548, 303);
+            this.dataGridView_price.TabIndex = 8;
+            this.dataGridView_price.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
+            this.dataGridView_price.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView_price.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             // 
             // tabPageSim
             // 
-            this.tabPageSim.Controls.Add(this.dataGridView_s);
+            this.tabPageSim.Controls.Add(this.dataGridView_sim);
             this.tabPageSim.Location = new System.Drawing.Point(4, 22);
             this.tabPageSim.Name = "tabPageSim";
-            this.tabPageSim.Size = new System.Drawing.Size(475, 303);
+            this.tabPageSim.Size = new System.Drawing.Size(548, 303);
             this.tabPageSim.TabIndex = 5;
             this.tabPageSim.Tag = "";
             this.tabPageSim.Text = "设备SIM号配置";
             this.tabPageSim.UseVisualStyleBackColor = true;
             // 
-            // dataGridView_s
+            // dataGridView_sim
             // 
-            this.dataGridView_s.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_s.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView_s.Name = "dataGridView_s";
-            this.dataGridView_s.RowTemplate.Height = 23;
-            this.dataGridView_s.Size = new System.Drawing.Size(475, 303);
-            this.dataGridView_s.TabIndex = 9;
-            this.dataGridView_s.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
-            this.dataGridView_s.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
-            this.dataGridView_s.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView_sim.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_sim.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView_sim.Name = "dataGridView_sim";
+            this.dataGridView_sim.RowTemplate.Height = 23;
+            this.dataGridView_sim.Size = new System.Drawing.Size(548, 303);
+            this.dataGridView_sim.TabIndex = 9;
+            this.dataGridView_sim.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
+            this.dataGridView_sim.UserAddedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView_sim.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             // 
             // tabPageRecord
             // 
-            this.tabPageRecord.Controls.Add(this.dataGridView_r);
+            this.tabPageRecord.Controls.Add(this.dataGridView_record);
             this.tabPageRecord.Location = new System.Drawing.Point(4, 22);
             this.tabPageRecord.Name = "tabPageRecord";
-            this.tabPageRecord.Size = new System.Drawing.Size(475, 303);
+            this.tabPageRecord.Size = new System.Drawing.Size(548, 303);
             this.tabPageRecord.TabIndex = 6;
             this.tabPageRecord.Tag = "";
             this.tabPageRecord.Text = "设备运行记录";
             this.tabPageRecord.UseVisualStyleBackColor = true;
             // 
-            // dataGridView_r
+            // dataGridView_record
             // 
-            this.dataGridView_r.AllowUserToAddRows = false;
-            this.dataGridView_r.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_r.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView_r.Name = "dataGridView_r";
-            this.dataGridView_r.RowTemplate.Height = 23;
-            this.dataGridView_r.Size = new System.Drawing.Size(475, 303);
-            this.dataGridView_r.TabIndex = 9;
-            this.dataGridView_r.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
-            this.dataGridView_r.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView_record.AllowUserToAddRows = false;
+            this.dataGridView_record.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_record.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView_record.Name = "dataGridView_record";
+            this.dataGridView_record.RowTemplate.Height = 23;
+            this.dataGridView_record.Size = new System.Drawing.Size(548, 303);
+            this.dataGridView_record.TabIndex = 9;
+            this.dataGridView_record.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
+            this.dataGridView_record.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            // 
+            // tabPageBreak
+            // 
+            this.tabPageBreak.Controls.Add(this.dataGridView_break);
+            this.tabPageBreak.Location = new System.Drawing.Point(4, 22);
+            this.tabPageBreak.Name = "tabPageBreak";
+            this.tabPageBreak.Size = new System.Drawing.Size(548, 303);
+            this.tabPageBreak.TabIndex = 7;
+            this.tabPageBreak.Text = "设备状况记录";
+            this.tabPageBreak.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView_break
+            // 
+            this.dataGridView_break.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_break.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView_break.Name = "dataGridView_break";
+            this.dataGridView_break.RowTemplate.Height = 23;
+            this.dataGridView_break.Size = new System.Drawing.Size(548, 303);
+            this.dataGridView_break.TabIndex = 0;
             // 
             // tabPageIncome
             // 
-            this.tabPageIncome.Controls.Add(this.dataGridView_i);
+            this.tabPageIncome.Controls.Add(this.dataGridView_income);
             this.tabPageIncome.Location = new System.Drawing.Point(4, 22);
             this.tabPageIncome.Name = "tabPageIncome";
-            this.tabPageIncome.Size = new System.Drawing.Size(475, 303);
+            this.tabPageIncome.Size = new System.Drawing.Size(548, 303);
             this.tabPageIncome.TabIndex = 4;
             this.tabPageIncome.Tag = "";
             this.tabPageIncome.Text = "营业额";
             this.tabPageIncome.UseVisualStyleBackColor = true;
             // 
-            // dataGridView_i
+            // dataGridView_income
             // 
-            this.dataGridView_i.AllowUserToAddRows = false;
-            this.dataGridView_i.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView_i.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView_i.Name = "dataGridView_i";
-            this.dataGridView_i.RowTemplate.Height = 23;
-            this.dataGridView_i.Size = new System.Drawing.Size(475, 303);
-            this.dataGridView_i.TabIndex = 9;
-            this.dataGridView_i.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
-            this.dataGridView_i.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
+            this.dataGridView_income.AllowUserToAddRows = false;
+            this.dataGridView_income.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView_income.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView_income.Name = "dataGridView_income";
+            this.dataGridView_income.RowTemplate.Height = 23;
+            this.dataGridView_income.Size = new System.Drawing.Size(548, 303);
+            this.dataGridView_income.TabIndex = 9;
+            this.dataGridView_income.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView_CellValueChanged);
+            this.dataGridView_income.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dataGridView_UserDeletedRow);
             // 
             // tabPageChart
             // 
@@ -640,7 +678,7 @@
             this.tabPageChart.Location = new System.Drawing.Point(4, 22);
             this.tabPageChart.Name = "tabPageChart";
             this.tabPageChart.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageChart.Size = new System.Drawing.Size(475, 303);
+            this.tabPageChart.Size = new System.Drawing.Size(548, 303);
             this.tabPageChart.TabIndex = 0;
             this.tabPageChart.Tag = "";
             this.tabPageChart.Text = "营业分析";
@@ -648,24 +686,24 @@
             // 
             // chart1
             // 
-            chartArea7.Area3DStyle.Enable3D = true;
-            chartArea7.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
-            chartArea7.Area3DStyle.PointDepth = 75;
-            chartArea7.Area3DStyle.WallWidth = 1;
-            chartArea7.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea7.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea7);
-            legend7.Name = "Legend1";
-            this.chart1.Legends.Add(legend7);
+            chartArea2.Area3DStyle.Enable3D = true;
+            chartArea2.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
+            chartArea2.Area3DStyle.PointDepth = 75;
+            chartArea2.Area3DStyle.WallWidth = 1;
+            chartArea2.BackColor = System.Drawing.Color.Gainsboro;
+            chartArea2.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chart1.Legends.Add(legend2);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            series7.ChartArea = "ChartArea1";
-            series7.CustomProperties = "EmptyPointValue=Zero";
-            series7.Legend = "Legend1";
-            series7.Name = "营业额";
-            series7.YValuesPerPoint = 4;
-            this.chart1.Series.Add(series7);
-            this.chart1.Size = new System.Drawing.Size(475, 303);
+            series2.ChartArea = "ChartArea1";
+            series2.CustomProperties = "EmptyPointValue=Zero";
+            series2.Legend = "Legend1";
+            series2.Name = "营业额";
+            series2.YValuesPerPoint = 4;
+            this.chart1.Series.Add(series2);
+            this.chart1.Size = new System.Drawing.Size(548, 303);
             this.chart1.TabIndex = 6;
             this.chart1.Text = "chart1";
             // 
@@ -845,7 +883,6 @@
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.dataGridView_cmd);
             this.groupBox4.Controls.Add(this.btn_send);
-            this.groupBox4.Enabled = false;
             this.groupBox4.Location = new System.Drawing.Point(909, 12);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(172, 439);
@@ -874,7 +911,7 @@
             // label_curTime
             // 
             this.label_curTime.AutoSize = true;
-            this.label_curTime.Location = new System.Drawing.Point(750, 469);
+            this.label_curTime.Location = new System.Drawing.Point(909, 459);
             this.label_curTime.Name = "label_curTime";
             this.label_curTime.Size = new System.Drawing.Size(53, 12);
             this.label_curTime.TabIndex = 20;
@@ -884,6 +921,16 @@
             // 
             this.timer_cur.Interval = 1000;
             this.timer_cur.Tick += new System.EventHandler(this.timer_cur_Tick);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(142, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "清空调试";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
@@ -917,15 +964,17 @@
             this.tabPageCmd.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_c)).EndInit();
             this.tabPageAccount.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_a)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_yonghu)).EndInit();
             this.tabPagePrice.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_d)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_price)).EndInit();
             this.tabPageSim.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_s)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_sim)).EndInit();
             this.tabPageRecord.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_r)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_record)).EndInit();
+            this.tabPageBreak.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_break)).EndInit();
             this.tabPageIncome.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_i)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView_income)).EndInit();
             this.tabPageChart.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
@@ -977,16 +1026,16 @@
         private System.Windows.Forms.Button btn_savedata;
         private System.Windows.Forms.Button btn_readAccess;
         private System.Windows.Forms.TabPage tabPagePrice;
-        private System.Windows.Forms.DataGridView dataGridView_d;
+        private System.Windows.Forms.DataGridView dataGridView_price;
         private System.Windows.Forms.TabPage tabPageAccount;
-        private System.Windows.Forms.DataGridView dataGridView_a;
+        private System.Windows.Forms.DataGridView dataGridView_yonghu;
         private System.Windows.Forms.TabPage tabPageIncome;
-        private System.Windows.Forms.DataGridView dataGridView_i;
+        private System.Windows.Forms.DataGridView dataGridView_income;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageSim;
-        private System.Windows.Forms.DataGridView dataGridView_s;
+        private System.Windows.Forms.DataGridView dataGridView_sim;
         private System.Windows.Forms.TabPage tabPageRecord;
-        private System.Windows.Forms.DataGridView dataGridView_r;
+        private System.Windows.Forms.DataGridView dataGridView_record;
         private System.Windows.Forms.Label label_curTime;
         private System.Windows.Forms.Timer timer_cur;
         private System.Windows.Forms.Button btn_delMessage;
@@ -995,6 +1044,10 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label_m_time;
+        private System.Windows.Forms.Button button_info;
+        private System.Windows.Forms.TabPage tabPageBreak;
+        private System.Windows.Forms.DataGridView dataGridView_break;
+        private System.Windows.Forms.Button button1;
     }
 }
 
