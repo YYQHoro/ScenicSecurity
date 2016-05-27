@@ -19,7 +19,6 @@ namespace Serial
 {
     public partial class Form1 : Form
     {
-        private Boolean M_State = false;
         //private DateTime M_Time;
 
         public struct M_Time
@@ -61,6 +60,10 @@ namespace Serial
             /// 串口调试的文本框
             /// </summary>
             TextboxSerial,
+            /// <summary>
+            /// 外壳安全提示
+            /// </summary>
+            LableSafe,
         }
 
         Table tableCmd;
@@ -79,8 +82,10 @@ namespace Serial
         private GSM.HandleSerialRecvDelegate gsmSerialProcess;
 
         public delegate void HandleInterfaceUpdataDelegate(UpdateUIwhich which, String str);
+
         private HandleInterfaceUpdataDelegate interfaceUpdataHandle;
 
+        private delegate void ChangeSkinStateDelegate(Boolean isBroken, int id);
 
 
         public Form1()
@@ -303,7 +308,7 @@ namespace Serial
                         if (text[3].Contains("break"))
                         {
                             m_time[i].isBroken = true;
-                            changeSkinState(true, i + 1);
+                            UpdateUI(UpdateUIwhich.LableSafe, (i + 1).ToString());
                             string[] t = new string[]
                             {
                                 ky.Key,
@@ -323,7 +328,6 @@ namespace Serial
                         else if (text[3].Contains("stop"))
                         {
                             m_time[i].isBroken = true;
-                            changeSkinState(true, i + 1);
                             string[] t = new string[]
                             {
                                 ky.Key,
@@ -367,39 +371,60 @@ namespace Serial
         /// <param name="str"></param>
         private void UpdateUI(UpdateUIwhich which, String str)
         {
-            switch (which)
+            if (btn_sendMessage.InvokeRequired)
             {
-                case UpdateUIwhich.TextboxRecv:
-                    String[] message = str.Split('|');
-                    textBox_message_recv.Text += "来自:" + message[0] + "\r\n日期:" + message[1] + "\r\n时间:" + message[2] + "\r\n内容:" + message[3] + "\r\n----------\r\n";
-                    MessageProcess(false, message);
-                    break;
-                case UpdateUIwhich.TextboxSend:
-                    btn_sendMessage.Enabled = true;
-                    comboBox3.Enabled = true;
-                    textBox_number.Enabled = true;
-                    btn_command.Enabled = true;
-                    btn_send.Enabled = true;
-                    btn_sendMessage.Text = "发送短信";
-                    string[] temp = str.Split('|');
-                    if (temp[1] == "OK")
-                    {
-                        textBox_message_send.Text += "-----Message-----\r\n" + temp[0] + "\r\n-----sent-----\r\n";
-                        Console.Out.WriteLine("短信发送完成.");
-                        MessageProcess(false, temp);
-                    }
-                    else
-                    {
-                        textBox_message_send.Text += "-----Message-----\r\n" + temp[0] + "\r\n---sent-failed-\r\n";
-                        Console.Out.WriteLine("短信发送失败.");
-                        Thread t1 = new Thread(new ParameterizedThreadStart(ShowMessageBox));
-                        t1.Start("短信发送失败.");
-                    }
+                this.BeginInvoke(interfaceUpdataHandle, which, str);
+            }
+            else
+            {
+                switch (which)
+                {
+                    case UpdateUIwhich.TextboxRecv:
+                        String[] message = str.Split('|');
+                        textBox_message_recv.Text += "来自:" + message[0] + "\r\n日期:" + message[1] + "\r\n时间:" + message[2] + "\r\n内容:" + message[3] + "\r\n----------\r\n";
+                        MessageProcess(false, message);
+                        break;
+                    case UpdateUIwhich.TextboxSend:
+                        btn_sendMessage.Enabled = true;
+                        comboBox3.Enabled = true;
+                        textBox_number.Enabled = true;
+                        btn_command.Enabled = true;
+                        btn_send.Enabled = true;
+                        btn_sendMessage.Text = "发送短信";
+                        string[] temp = str.Split('|');
+                        if (temp[1] == "OK")
+                        {
+                            textBox_message_send.Text += "-----Message-----\r\n" + temp[0] + "\r\n-----sent-----\r\n";
+                            Console.Out.WriteLine("短信发送完成.");
+                            MessageProcess(false, temp);
+                        }
+                        else
+                        {
+                            textBox_message_send.Text += "-----Message-----\r\n" + temp[0] + "\r\n---sent-failed-\r\n";
+                            Console.Out.WriteLine("短信发送失败.");
+                            Thread t1 = new Thread(new ParameterizedThreadStart(ShowMessageBox));
+                            t1.Start("短信发送失败.");
+                        }
 
-                    break;
-                case UpdateUIwhich.TextboxSerial:
-                    textBox_serialDebug.Text += str + "\r\n-----------\r\n";
-                    break;
+                        break;
+                    case UpdateUIwhich.TextboxSerial:
+                        textBox_serialDebug.Text += str + "\r\n-----------\r\n";
+                        break;
+
+                    case UpdateUIwhich.LableSafe:
+                        if (str != "安全")
+                        {
+                            label2.Text = str + "号已损";
+                            label2.ForeColor = Color.Red;
+                        }
+                        else
+                        {
+                            label2.Text = "安全";
+                            label2.ForeColor = Color.Lime;
+                        }
+                        break;
+
+                }
             }
         }
 
@@ -421,22 +446,6 @@ namespace Serial
             {
                 MessageBox.Show("请先连接设备");
             }
-
-
-        }
-        private void changeSkinState(Boolean isBroken, int id)
-        {
-            if (isBroken)
-            {
-                label2.Text = id + "号已损";
-                label2.ForeColor = Color.Red;
-            }
-            else
-            {
-                label2.Text = "安全";
-                label2.ForeColor = Color.Lime;
-            }
-
         }
 
         private void btn_connect_Click(object sender, EventArgs e)
@@ -798,7 +807,13 @@ namespace Serial
             }
 
             if (m_time != null)
-                changeSkinState(m_time[comboBox1.SelectedIndex].isBroken, comboBox1.SelectedIndex + 1);
+            {
+                if (m_time[comboBox1.SelectedIndex].isBroken)
+                    UpdateUI(UpdateUIwhich.LableSafe, (comboBox1.SelectedIndex + 1).ToString());
+                else
+                    UpdateUI(UpdateUIwhich.LableSafe, "安全");
+            }
+               
             //Console.WriteLine(state);
 
         }
