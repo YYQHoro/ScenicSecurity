@@ -23,12 +23,30 @@ namespace Serial
 
         public struct M_Time
         {
+            /// <summary>
+            /// 开始时间戳
+            /// </summary>
             public DateTime start;
+            /// <summary>
+            /// 停止时间戳
+            /// </summary>
             public DateTime end;
-            
+            /// <summary>
+            /// 最近一次暂停的时间戳
+            /// </summary>
+            public DateTime pause;
+            /// <summary>
+            /// 是否损坏
+            /// </summary>
             public bool isBroken;
         }
-
+        public enum MotorState
+        {
+            Start,
+            Stop,
+            Pause,
+            Continue,
+        }
         public M_Time[] m_time;
 
         const String mdbPath = "database.mdb";
@@ -326,9 +344,13 @@ namespace Serial
                             t1.Start(ky.Key + "请求帮助！！！");
 
                         }
-                        else if (text[3].Contains("stop"))
+                        else if (text[3].Contains("STOP"))
                         {
-                            StopConsume(i, false);
+                            StopConsume(i, MotorState.Pause);
+                        }
+                        else if (text[3].Contains("START"))
+                        {
+                            StopConsume(i, MotorState.Continue);
                         }
                         else if (text[3].Contains("Low"))
                         {
@@ -597,7 +619,7 @@ namespace Serial
                     textBox_messageText.Text = "stop";
                     //btn_sendMessage_Click(null, null);
 
-                    StopConsume(comboBox3.SelectedIndex, true);
+                    StopConsume(comboBox3.SelectedIndex, MotorState.Stop);
 
                 }
                 tableDeviceSIM.UpdateToAccess();
@@ -608,9 +630,9 @@ namespace Serial
             }
 
         }
-        public void StopConsume(int DeviceID, bool isStop)
+        public void StopConsume(int DeviceID, MotorState state)
         {
-            if (isStop)
+            if (state == MotorState.Stop)
             {
                 timer_cur_Tick(null, null);
 
@@ -654,16 +676,11 @@ namespace Serial
 
                 btn_m_ctl.Text = "启动";
             }
-            else
+            else if (state == MotorState.Pause)
             {
                 timer_cur_Tick(null, null);
 
-                //m_time[comboBox3.SelectedIndex].end = DateTime.Now;
-
-                UInt64 ini = Convert.ToUInt64(dataGridView_sim.Rows[DeviceID].Cells[3].Value);
-
-                ini += (UInt64)(DateTime.Now - m_time[DeviceID].start).TotalSeconds;
-                //label_m_time.Text = ini.ToString();
+                m_time[DeviceID].pause = DateTime.Now;
 
                 String[] temp = new String[]
                 {
@@ -671,8 +688,23 @@ namespace Serial
                         m_time[DeviceID].start.ToLongDateString(),
                         m_time[DeviceID].start.ToLongTimeString(),
                         "暂停",
-                        DateTime.Now.ToLongTimeString(),
+                        m_time[DeviceID].pause.ToLongTimeString(),
                         label_m_time.Text,
+
+                };
+                tableDeviceRecord.addNew(temp);
+            }
+            else if (state == MotorState.Continue)
+            {
+                //timer_cur_Tick(null, null);
+                String[] temp = new String[]
+                {
+                        (string)dataGridView_sim.Rows[DeviceID].Cells[1].Value,
+                        "继续使用",
+                        DateTime.Now.ToLongTimeString(),
+                        "暂停时间",
+                        ((UInt64)((DateTime.Now - m_time[DeviceID].pause).TotalSeconds)).ToString()+"秒",
+                        ((UInt64)((DateTime.Now - m_time[DeviceID].start).TotalSeconds)).ToString(),
 
                 };
                 tableDeviceRecord.addNew(temp);
