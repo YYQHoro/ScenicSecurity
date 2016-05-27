@@ -395,7 +395,7 @@ namespace Serial
                         Thread t1 = new Thread(new ParameterizedThreadStart(ShowMessageBox));
                         t1.Start("短信发送失败.");
                     }
-                    
+
                     break;
                 case UpdateUIwhich.TextboxSerial:
                     textBox_serialDebug.Text += str + "\r\n-----------\r\n";
@@ -451,10 +451,17 @@ namespace Serial
 
                     comboBox_serialNumber.Enabled = true;
                     comboBox_baud.Enabled = true;
+
+                    btn_delMessage.Enabled = false;
+                    btn_command.Enabled = false;
+                    btn_sendMessage.Enabled = false;
+                    btn_m_ctl.Enabled = false;
+                    button_info.Enabled = false;
                 }
                 else
                 {
                     serialPort1.PortName = comboBox_serialNumber.SelectedItem.ToString();
+                    serialPort1.BaudRate = Convert.ToInt32(comboBox_baud.SelectedItem.ToString());
                     serialPort1.Open();
                     label_state_serial.Text = "串口状态：已连接";
                     btn_connect.Text = "断开串口";
@@ -464,6 +471,12 @@ namespace Serial
 
                     comboBox_serialNumber.Enabled = false;
                     comboBox_baud.Enabled = false;
+
+                    btn_delMessage.Enabled = true;
+                    btn_command.Enabled = true;
+                    btn_sendMessage.Enabled = true;
+                    btn_m_ctl.Enabled = true;
+                    button_info.Enabled = true;
                 }
             }
             catch (Exception ex)
@@ -568,7 +581,7 @@ namespace Serial
                     timer_cur_Tick(null, null);
 
                     m_time[comboBox3.SelectedIndex].end = DateTime.Now;
-                    
+
 
                     UInt64 ini = Convert.ToUInt64(dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[3].Value);
 

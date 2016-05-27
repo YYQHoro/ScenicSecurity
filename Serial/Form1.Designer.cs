@@ -45,9 +45,9 @@
             System.Windows.Forms.Label label_m_ID;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.GroupBox groupBox6;
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.textBox_message_recv = new System.Windows.Forms.TextBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
@@ -333,6 +333,7 @@
             // 
             // button_info
             // 
+            this.button_info.Enabled = false;
             this.button_info.Location = new System.Drawing.Point(567, 60);
             this.button_info.Name = "button_info";
             this.button_info.Size = new System.Drawing.Size(75, 23);
@@ -394,6 +395,7 @@
             // 
             // btn_m_ctl
             // 
+            this.btn_m_ctl.Enabled = false;
             this.btn_m_ctl.Location = new System.Drawing.Point(567, 12);
             this.btn_m_ctl.Name = "btn_m_ctl";
             this.btn_m_ctl.Size = new System.Drawing.Size(75, 23);
@@ -686,23 +688,23 @@
             // 
             // chart1
             // 
-            chartArea2.Area3DStyle.Enable3D = true;
-            chartArea2.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
-            chartArea2.Area3DStyle.PointDepth = 75;
-            chartArea2.Area3DStyle.WallWidth = 1;
-            chartArea2.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
+            chartArea5.Area3DStyle.Enable3D = true;
+            chartArea5.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
+            chartArea5.Area3DStyle.PointDepth = 75;
+            chartArea5.Area3DStyle.WallWidth = 1;
+            chartArea5.BackColor = System.Drawing.Color.Gainsboro;
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend5.Name = "Legend1";
+            this.chart1.Legends.Add(legend5);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.CustomProperties = "EmptyPointValue=Zero";
-            series2.Legend = "Legend1";
-            series2.Name = "营业额";
-            series2.YValuesPerPoint = 4;
-            this.chart1.Series.Add(series2);
+            series5.ChartArea = "ChartArea1";
+            series5.CustomProperties = "EmptyPointValue=Zero";
+            series5.Legend = "Legend1";
+            series5.Name = "营业额";
+            series5.YValuesPerPoint = 4;
+            this.chart1.Series.Add(series5);
             this.chart1.Size = new System.Drawing.Size(548, 303);
             this.chart1.TabIndex = 6;
             this.chart1.Text = "chart1";
@@ -718,7 +720,7 @@
             this.btn_connect.Name = "btn_connect";
             this.btn_connect.Size = new System.Drawing.Size(68, 23);
             this.btn_connect.TabIndex = 0;
-            this.btn_connect.Text = "连接串口";
+            this.btn_connect.Text = "连接设备";
             this.btn_connect.UseVisualStyleBackColor = true;
             this.btn_connect.Click += new System.EventHandler(this.btn_connect_Click);
             // 
@@ -778,6 +780,7 @@
             // 
             // btn_delMessage
             // 
+            this.btn_delMessage.Enabled = false;
             this.btn_delMessage.Location = new System.Drawing.Point(151, 76);
             this.btn_delMessage.Name = "btn_delMessage";
             this.btn_delMessage.Size = new System.Drawing.Size(65, 21);
@@ -788,6 +791,7 @@
             // 
             // btn_sendMessage
             // 
+            this.btn_sendMessage.Enabled = false;
             this.btn_sendMessage.Location = new System.Drawing.Point(151, 118);
             this.btn_sendMessage.Name = "btn_sendMessage";
             this.btn_sendMessage.Size = new System.Drawing.Size(65, 21);
@@ -830,6 +834,7 @@
             // 
             // btn_command
             // 
+            this.btn_command.Enabled = false;
             this.btn_command.Location = new System.Drawing.Point(151, 97);
             this.btn_command.Name = "btn_command";
             this.btn_command.Size = new System.Drawing.Size(65, 21);
