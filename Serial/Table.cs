@@ -102,6 +102,7 @@ namespace Serial
                 
                 for (int i = 0; i < dataGridView.Columns.Count; i++) {
                     dataGridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+          
                 }
 
                 //dataGridView.CurrentCell = dataGridView.Rows[0].Cells[0];

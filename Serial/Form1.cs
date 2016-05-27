@@ -309,6 +309,7 @@ namespace Serial
                                 ky.Key,
                                 DateTime.Now.ToLongDateString(),
                                 DateTime.Now.ToLongTimeString(),
+
                             };
 
                             tableDeviceBreak.addNew(t);
@@ -567,16 +568,7 @@ namespace Serial
                     timer_cur_Tick(null, null);
 
                     m_time[comboBox3.SelectedIndex].end = DateTime.Now;
-                    String[] temp = new String[]
-                    {
-                        (string)dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[1].Value,
-                        m_time[comboBox3.SelectedIndex].start.ToLongDateString(),
-                        m_time[comboBox3.SelectedIndex].start.ToLongTimeString(),
-                        m_time[comboBox3.SelectedIndex].end.ToLongDateString(),
-                        m_time[comboBox3.SelectedIndex].end.ToLongTimeString(),
-                    };
-
-                    tableDeviceRecord.addNew(temp);
+                    
 
                     UInt64 ini = Convert.ToUInt64(dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[3].Value);
 
@@ -593,6 +585,19 @@ namespace Serial
 
                     //结束编辑
                     dataGridView_sim.EndEdit();
+
+
+                    String[] temp = new String[]
+                    {
+                        (string)dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[1].Value,
+                        m_time[comboBox3.SelectedIndex].start.ToLongDateString(),
+                        m_time[comboBox3.SelectedIndex].start.ToLongTimeString(),
+                        m_time[comboBox3.SelectedIndex].end.ToLongDateString(),
+                        m_time[comboBox3.SelectedIndex].end.ToLongTimeString(),
+                        ini.ToString(),
+
+                    };
+                    tableDeviceRecord.addNew(temp);
 
                     AddTodayIncome(Convert.ToUInt64(label_sum.Text));
 
