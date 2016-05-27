@@ -49,19 +49,20 @@ namespace Serial
         }
         public M_Time[] m_time;
 
-        const String mdbPath = "database.mdb";
-        const String tableNameCmd = "cmd";
-        const String tableNameIncome = "income";
-        const String tableNamePrice = "price";
-        const String tableNameAccount = "account";
-        const String tableNameDeviceRecord = "deviceRecord";
-        const String tableNameDeviceSIM = "deviceSIM";
-        const String tableNameBreak = "deviceBreak";
+        public const String mdbPath = "database.mdb";
+        public const String tableNameCmd = "cmd";
+        public const String tableNameIncome = "income";
+        public const String tableNamePrice = "price";
+        public const String tableNameAccount = "account";
+        public const String tableNameDeviceRecord = "deviceRecord";
+        public const String tableNameDeviceSIM = "deviceSIM";
+        public const String tableNameBreak = "deviceBreak";
         /// <summary>
         /// 密码
         /// </summary>
         const string PASSWORD = "a";
-
+        const string PASSWORD_SUPER = "aaa";
+        static public bool isSuper = false;
         /// <summary>
         /// 将更新的UI
         /// </summary>
@@ -153,39 +154,46 @@ namespace Serial
             //密码处理函数////////////////////////////////////////////////
             login:
             string passwd = Interaction.InputBox("请输入管理员密码:\n\n留空则表示不登录系统直接退出", "登录");
-            if (passwd != PASSWORD)
+
+            if (passwd == PASSWORD)
             {
-                if (passwd == "")
+                isSuper = false;
+                //MessageBox.Show("欢迎使用！", " ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (passwd == PASSWORD_SUPER)
+            {
+                isSuper = true;
+                MessageBox.Show("欢迎使用！", " ", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (passwd == "")
+            {
+                Application.Exit();
+            }
+            else
+            {
+                if (errorTimes == 5)
                 {
-                    Application.Exit();
+                    MessageBox.Show("超过密码输入次数，电脑30秒后将自动关机。");
+
                 }
                 else
                 {
-                    if (errorTimes == 5)
-                    {
-                        MessageBox.Show("超过密码输入次数，电脑30秒后将自动关机。");
+                    MessageBox.Show("密码错误！请重新输入", "你还剩余" + (5 - errorTimes) + "尝试机会");
 
-                    }
-                    else
-                    {
-                        MessageBox.Show("密码错误！请重新输入", "你还剩余" + (5 - errorTimes) + "尝试机会");
-
-                    }
-                    errorTimes++;
-                    if (errorTimes > 5)
-                    {
-                        System.Diagnostics.Process bootProcess = new System.Diagnostics.Process();
-                        bootProcess.StartInfo.FileName = "shutdown";
-                        bootProcess.StartInfo.Arguments = "/s /t 30 /f";
-                        //bootProcess.StartInfo.Arguments += "";
-                        bootProcess.Start();
-                        while (true) ;
-                        //Thread.Sleep(2000);
-                        //Application.Exit();
-                    }
-                    goto login;
                 }
-
+                errorTimes++;
+                if (errorTimes > 5)
+                {
+                    System.Diagnostics.Process bootProcess = new System.Diagnostics.Process();
+                    bootProcess.StartInfo.FileName = "shutdown";
+                    bootProcess.StartInfo.Arguments = "/s /t 30 /f";
+                    //bootProcess.StartInfo.Arguments += "";
+                    bootProcess.Start();
+                    while (true) ;
+                    //Thread.Sleep(2000);
+                    //Application.Exit();
+                }
+                goto login;
             }
             //密码处理函数////////////////////////////////////////////////   
 
@@ -246,6 +254,15 @@ namespace Serial
             tableDeviceRecord = new Table(mdbPath, tableNameDeviceRecord, dataGridView_record, null);
             tableDeviceSIM = new Table(mdbPath, tableNameDeviceSIM, dataGridView_sim, null);
             tableDeviceBreak = new Table(mdbPath, tableNameBreak, dataGridView_break, null);
+
+            //tablePrice.disableSort();
+            //tableIncome.disableSort();
+            //tableAccount.disableSort();
+            //tableCmd.disableSort();
+            ////tableDeviceRecord.disableSort();
+            //tableDeviceBreak.disableSort();
+
+
 
             dataGridView_sim.DefaultValuesNeeded += DataGridView_s_DefaultValuesNeeded;
 
@@ -507,11 +524,14 @@ namespace Serial
                     btn_sendMessage.Enabled = true;
                     btn_m_ctl.Enabled = true;
                     button_info.Enabled = true;
+
+                    //gsm.deleteMessage();
+
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show("设备连接失败。请重试", "温馨提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -605,7 +625,7 @@ namespace Serial
                         //结束编辑
                         dataGridView_sim.EndEdit();
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
 
                     }
@@ -655,7 +675,7 @@ namespace Serial
                     //结束编辑
                     dataGridView_sim.EndEdit();
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
 
                 }
@@ -734,7 +754,7 @@ namespace Serial
                         dataGridView_income.EndEdit();
 
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         //MessageBox.Show(ex.ToString());
                     }

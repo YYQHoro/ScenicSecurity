@@ -44,7 +44,7 @@ namespace Serial
         public DataGridView dataGridView;
         public Chart chart;
 
-        public Table(String mdbPath, String tableName, DataGridView dgv,Chart chart)
+        public Table(String mdbPath, String tableName, DataGridView dgv, Chart chart)
         {
             if (dgv != null)
             {
@@ -55,14 +55,14 @@ namespace Serial
 
                 //连接字符串,用来连接Database数据库;
                 connString = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + mdbPath + ";";
-                
+
                 //SQL查询语句,用来从Database数据库tblMat表中获取所有数据;
                 sqlString = "SELECT * from " + tableName;
 
                 //设置列宽
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
 
-                
+
             }
 
         }
@@ -85,7 +85,7 @@ namespace Serial
 
                 //填充内存表
                 da.Fill(dt);
-                
+
                 //获取每列的标题名，从1开始跳过首列（ID主键列）
                 columnsName = new string[dt.Columns.Count - 1];
                 for (int i = 1; i < dt.Columns.Count; i++)
@@ -99,10 +99,40 @@ namespace Serial
 
                 //datagridview绑定内存中的表DataTable，至此dataGridView就自动显示内容了
                 //dataGridView.DataSource = dt;
-                
-                for (int i = 0; i < dataGridView.Columns.Count; i++) {
-                    dataGridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-          
+
+
+                for (int i = 0; i < dataGridView.Columns.Count; i++)
+                {
+                    dataGridView.Columns[i].ReadOnly = true;
+                }
+
+
+                ////ID不能改
+                //dataGridView.Columns[0].ReadOnly = true;
+                ////设备名不能改
+                //dataGridView.Columns[1].ReadOnly = true;
+
+                if (tableName == Form1.tableNameDeviceSIM)//除了SIm卡配置
+                {
+                    dataGridView.Columns[1].ReadOnly = false;
+                    dataGridView.Columns[2].ReadOnly = true;
+                    dataGridView.Columns[4].ReadOnly = true;
+                }
+                if(tableName==Form1.tableNamePrice)
+                {
+                    if(Form1.isSuper)
+                    {
+                        dataGridView.Columns[2].ReadOnly = false;
+                        dataGridView.Columns[3].ReadOnly = false;
+                    }
+                }
+
+                if (tableName != Form1.tableNameDeviceRecord)//除了设备运行记录可排序
+                {
+                    for (int i = 0; i < dataGridView.Columns.Count; i++)
+                    {
+                        dataGridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;//不可排序
+                    }
                 }
 
                 //dataGridView.CurrentCell = dataGridView.Rows[0].Cells[0];
@@ -114,7 +144,6 @@ namespace Serial
             dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
 
         }
-
         /// <summary>
         /// 把dataGridView的数据写到Access
         /// </summary>
@@ -137,14 +166,14 @@ namespace Serial
         /// </summary>
         public void updataToChart()
         {
-            if(chart!=null)
-                chart.Series[0].Points.DataBind(dt.AsEnumerable(),columnsName[1],columnsName[0], "");
+            if (chart != null)
+                chart.Series[0].Points.DataBind(dt.AsEnumerable(), columnsName[1], columnsName[0], "");
         }
         /// <summary>
         /// 添加新数据到数据库然后重新刷新表格
         /// </summary>
         /// <param name="text">数据内容数组，数组内部顺序等同相应表格的列顺序(舍弃第一个ID列)</param>
-        public void addNew(String []text)
+        public void addNew(String[] text)
         {
             DataBase.WriteDataByColumns(mdbPath, tableName, columnsName, text);
             ReadFromAccess();
