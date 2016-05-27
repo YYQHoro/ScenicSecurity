@@ -53,7 +53,7 @@ namespace Serial
 
                 //得到从主线程获得的更新UI的委托对象
                 updateMainUI = ui;
-
+                
                 timer_message_out = new System.Timers.Timer(10000);
                 timer_message_out.AutoReset = false;
                 timer_message_out.Elapsed += timer_message_out_tick;
@@ -114,7 +114,7 @@ namespace Serial
 
                 String comb = message_from + "|" + message_date + "|" + message_time + "|" + message;
 
-                updateMainUI(Form1.UpdateUIwhich.TextboxRecv, comb);
+                 updateMainUI(Form1.UpdateUIwhich.TextboxRecv, comb);
             }
             else if (package[0].StartsWith("+CMTI: \"SM\""))
             {

@@ -446,8 +446,8 @@ namespace Serial
                 if (serialPort1.IsOpen)
                 {
                     serialPort1.Close();
-                    label_state_serial.Text = "串口状态：已断开";
-                    btn_connect.Text = "连接串口";
+                    label_state_serial.Text = "设备状态：已断开";
+                    btn_connect.Text = "连接设备";
 
                     comboBox_serialNumber.Enabled = true;
                     comboBox_baud.Enabled = true;
@@ -463,8 +463,8 @@ namespace Serial
                     serialPort1.PortName = comboBox_serialNumber.SelectedItem.ToString();
                     serialPort1.BaudRate = Convert.ToInt32(comboBox_baud.SelectedItem.ToString());
                     serialPort1.Open();
-                    label_state_serial.Text = "串口状态：已连接";
-                    btn_connect.Text = "断开串口";
+                    label_state_serial.Text = "设备状态：已连接";
+                    btn_connect.Text = "断开设备";
 
                     gsm = new GSM(serialPort1, interfaceUpdataHandle);
                     gsmSerialProcess = gsm.GsmSerialHandle;
@@ -494,7 +494,7 @@ namespace Serial
             }
             else
             {
-                MessageBox.Show("请先连接串口", "温馨提示");
+                MessageBox.Show("请先连接设备", "温馨提示");
             }
 
         }
@@ -562,6 +562,8 @@ namespace Serial
                     textBox_messageText.Text = "OPENOPEN";
                     btn_sendMessage_Click(null, null);
 
+                    dataGridView_sim.CurrentCell = dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4];
+
                     //启动编辑
                     dataGridView_sim.BeginEdit(false);
                     dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4].Value = "已启动";
@@ -626,7 +628,7 @@ namespace Serial
 
         }
         /// <summary>
-        /// 未理解
+        /// 把当次收入算入今天的收入
         /// </summary>
         /// <param name="income"></param>
         private void AddTodayIncome(UInt64 income)
@@ -639,6 +641,8 @@ namespace Serial
                     UInt64 last = Convert.ToUInt64(dataGridView_income.Rows[dataGridView_income.RowCount - 1].Cells[1].Value);
 
                     last += income;
+
+                    dataGridView_income.CurrentCell = dataGridView_income.Rows[dataGridView_income.RowCount - 1].Cells[1];
 
                     dataGridView_income.BeginEdit(false);
                     dataGridView_income.Rows[dataGridView_income.RowCount - 1].Cells[1].Value = last;
@@ -774,7 +778,7 @@ namespace Serial
             }
             else
             {
-                MessageBox.Show("请先连接串口", "温馨提示");
+                MessageBox.Show("请先连接设备", "温馨提示");
             }
         }
 
