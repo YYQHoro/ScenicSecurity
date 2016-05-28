@@ -858,7 +858,7 @@ namespace Serial
         /// <param name="e"></param>
         private void timer_cur_Tick(object sender, EventArgs e)
         {
-            label_curTime.Text = "当前时间：" + DateTime.Now.ToLocalTime().ToString();
+            label_curTime.Text = "当前时间：\r\n" + DateTime.Now.ToLocalTime().ToString();
 
 
             if ((string)dataGridView_sim.Rows[comboBox3.SelectedIndex].Cells[4].Value == "已启动")
@@ -940,6 +940,16 @@ namespace Serial
         private void button1_Click(object sender, EventArgs e)
         {
             textBox_serialDebug.Text = "";
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            textBox_message_recv.Text = "";
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            textBox_message_send.Text = "";
         }
     }
 }

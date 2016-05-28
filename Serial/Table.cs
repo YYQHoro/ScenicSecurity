@@ -100,12 +100,19 @@ namespace Serial
                 //datagridview绑定内存中的表DataTable，至此dataGridView就自动显示内容了
                 //dataGridView.DataSource = dt;
 
-
+                
                 for (int i = 0; i < dataGridView.Columns.Count; i++)
                 {
+                    //全部列不可修改
                     dataGridView.Columns[i].ReadOnly = true;
+                    //拉伸列宽来填满表格
+                    dataGridView.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                    
                 }
-
+                //ID列的宽度占全部列权重20%
+                dataGridView.Columns[0].FillWeight = 20;
+                //表格背景颜色
+                dataGridView.BackgroundColor = System.Drawing.Color.White;
 
                 ////ID不能改
                 //dataGridView.Columns[0].ReadOnly = true;
@@ -141,7 +148,7 @@ namespace Serial
                 updataToChart();
             }
             //设置列宽
-            dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            //dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
 
         }
         /// <summary>
