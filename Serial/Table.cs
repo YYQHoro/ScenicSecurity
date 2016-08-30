@@ -110,7 +110,7 @@ namespace Serial
                     
                 }
                 //ID列的宽度占全部列权重20%
-                dataGridView.Columns[0].FillWeight = 20;
+                dataGridView.Columns[0].FillWeight = 30;
                 //表格背景颜色
                 dataGridView.BackgroundColor = System.Drawing.Color.White;
 
@@ -122,7 +122,7 @@ namespace Serial
                 if (tableName == Form1.tableNameDeviceSIM)//除了SIm卡配置
                 {
                     dataGridView.Columns[1].ReadOnly = false;
-                    dataGridView.Columns[2].ReadOnly = true;
+                    dataGridView.Columns[2].ReadOnly = false;
                     dataGridView.Columns[4].ReadOnly = true;
                 }
                 if(tableName==Form1.tableNamePrice)
@@ -134,12 +134,13 @@ namespace Serial
                     }
                 }
 
-                if (tableName != Form1.tableNameDeviceRecord)//除了设备运行记录可排序
+                if (tableName != Form1.tableNameDeviceRecord&& tableName != Form1.tableNameBreak)//除了设备运行记录可排序
                 {
                     for (int i = 0; i < dataGridView.Columns.Count; i++)
                     {
                         dataGridView.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;//不可排序
                     }
+
                 }
 
                 //dataGridView.CurrentCell = dataGridView.Rows[0].Cells[0];

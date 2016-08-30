@@ -39,6 +39,7 @@ namespace Serial
             /// 是否损坏
             /// </summary>
             public bool isBroken;
+            public bool isPause;
         }
         public enum MotorState
         {
@@ -343,6 +344,8 @@ namespace Serial
 
                         if (text[3].Contains("break"))
                         {
+                            Thread t1 = new Thread(new ParameterizedThreadStart(ShowMessageBox));
+                            t1.Start(ky.Key + "已损坏！！！");
                             m_time[i].isBroken = true;
                             UpdateUI(UpdateUIwhich.LableSafe, (i + 1).ToString());
                             string[] t = new string[]
@@ -365,7 +368,7 @@ namespace Serial
                         {
                             StopConsume(i, MotorState.Pause);
                         }
-                        else if (text[3].Contains("START"))
+                        else if (text[3].Contains("START") && m_time[i].isPause)
                         {
                             StopConsume(i, MotorState.Continue);
                         }
@@ -375,7 +378,26 @@ namespace Serial
                             t1.Start(ky.Key + "低电压！！！");
 
                         }
+                        else if (text[3].Contains("Stoping"))
+                        {
+                            if (m_time[i].isPause)
+                            {
+                                Thread t1 = new Thread(new ParameterizedThreadStart(ShowMessageBox));
+                                t1.Start(ky.Key + "处于暂停状态！！！");
+                            }
+                            else
+                            {
+                                Thread t1 = new Thread(new ParameterizedThreadStart(ShowMessageBox));
+                                t1.Start(ky.Key + "处于未使用状态！！！");
+                            }
 
+                        }
+                        else if (text[3].Contains("Running"))
+                        {
+                            Thread t1 = new Thread(new ParameterizedThreadStart(ShowMessageBox));
+                            t1.Start(ky.Key + "正在使用中！！！");
+
+                        }
                         break;
                         //dataUpdate();
 
@@ -632,13 +654,15 @@ namespace Serial
 
                     m_time[comboBox3.SelectedIndex].start = DateTime.Now;
                     btn_m_ctl.Text = "停止";
+
                 }
                 else
                 {
                     //发送停止命令
-                    textBox_messageText.Text = "stop";
-                    //btn_sendMessage_Click(null, null);
-
+                    textBox_messageText.Text = "STOP";
+                    btn_sendMessage_Click(null, null);
+                    UpdateUI(UpdateUIwhich.LableSafe, "安全");
+                    m_time[comboBox3.SelectedIndex].isBroken = false;
                     StopConsume(comboBox3.SelectedIndex, MotorState.Stop);
 
                 }
@@ -701,7 +725,7 @@ namespace Serial
                 timer_cur_Tick(null, null);
 
                 m_time[DeviceID].pause = DateTime.Now;
-
+                m_time[DeviceID].isPause = true;
                 String[] temp = new String[]
                 {
                         (string)dataGridView_sim.Rows[DeviceID].Cells[1].Value,
@@ -716,7 +740,7 @@ namespace Serial
             }
             else if (state == MotorState.Continue)
             {
-                //timer_cur_Tick(null, null);
+                m_time[DeviceID].isPause = false;
                 String[] temp = new String[]
                 {
                         (string)dataGridView_sim.Rows[DeviceID].Cells[1].Value,
@@ -854,6 +878,7 @@ namespace Serial
         /// <summary>
         /// 每秒触发一次记录设备运行时间。刷新系统时间
         /// </summary>
+        /// +
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void timer_cur_Tick(object sender, EventArgs e)
@@ -934,7 +959,7 @@ namespace Serial
         {
             //发送查询命令
             textBox_messageText.Text = "SEARCH";
-            btn_sendMessage_Click(null, null);
+           // btn_sendMessage_Click(null, null);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -950,6 +975,11 @@ namespace Serial
         private void button2_Click(object sender, EventArgs e)
         {
             textBox_message_send.Text = "";
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

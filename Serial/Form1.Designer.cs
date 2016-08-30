@@ -45,9 +45,11 @@
             System.Windows.Forms.Label label_m_ID;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.GroupBox groupBox6;
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea12 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend12 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.textBox_message_recv = new System.Windows.Forms.TextBox();
@@ -102,12 +104,10 @@
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.label_curTime = new System.Windows.Forms.Label();
             this.label_comm_back = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label_curTime = new System.Windows.Forms.Label();
             this.timer_cur = new System.Windows.Forms.Timer(this.components);
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
             label = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
@@ -207,6 +207,26 @@
             groupBox5.TabStop = false;
             groupBox5.Text = "调试";
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(6, 17);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(64, 23);
+            this.button3.TabIndex = 3;
+            this.button3.Text = "清收短信";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(75, 17);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(64, 23);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "清发短信";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(144, 17);
@@ -236,7 +256,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(203, 215);
+            this.tabPage3.Size = new System.Drawing.Size(203, 188);
             this.tabPage3.TabIndex = 0;
             this.tabPage3.Text = "收短信";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -257,7 +277,7 @@
             this.tabPage5.Controls.Add(this.textBox_message_send);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(203, 215);
+            this.tabPage5.Size = new System.Drawing.Size(203, 188);
             this.tabPage5.TabIndex = 2;
             this.tabPage5.Text = "发短信";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -357,6 +377,7 @@
             groupBox3.TabIndex = 15;
             groupBox3.TabStop = false;
             groupBox3.Text = "收费情况";
+            groupBox3.Enter += new System.EventHandler(this.groupBox3_Enter);
             // 
             // button_info
             // 
@@ -584,7 +605,7 @@
             this.tabPageAccount.Controls.Add(this.dataGridView_yonghu);
             this.tabPageAccount.Location = new System.Drawing.Point(4, 22);
             this.tabPageAccount.Name = "tabPageAccount";
-            this.tabPageAccount.Size = new System.Drawing.Size(646, 343);
+            this.tabPageAccount.Size = new System.Drawing.Size(634, 343);
             this.tabPageAccount.TabIndex = 3;
             this.tabPageAccount.Tag = "";
             this.tabPageAccount.Text = "账户信息";
@@ -610,7 +631,7 @@
             this.tabPagePrice.Controls.Add(this.dataGridView_price);
             this.tabPagePrice.Location = new System.Drawing.Point(4, 22);
             this.tabPagePrice.Name = "tabPagePrice";
-            this.tabPagePrice.Size = new System.Drawing.Size(646, 343);
+            this.tabPagePrice.Size = new System.Drawing.Size(634, 343);
             this.tabPagePrice.TabIndex = 2;
             this.tabPagePrice.Tag = "";
             this.tabPagePrice.Text = "单价设定";
@@ -636,7 +657,7 @@
             this.tabPageSim.Controls.Add(this.dataGridView_sim);
             this.tabPageSim.Location = new System.Drawing.Point(4, 22);
             this.tabPageSim.Name = "tabPageSim";
-            this.tabPageSim.Size = new System.Drawing.Size(646, 343);
+            this.tabPageSim.Size = new System.Drawing.Size(634, 343);
             this.tabPageSim.TabIndex = 5;
             this.tabPageSim.Tag = "";
             this.tabPageSim.Text = "设备SIM号配置";
@@ -662,7 +683,7 @@
             this.tabPageRecord.Controls.Add(this.dataGridView_record);
             this.tabPageRecord.Location = new System.Drawing.Point(4, 22);
             this.tabPageRecord.Name = "tabPageRecord";
-            this.tabPageRecord.Size = new System.Drawing.Size(646, 343);
+            this.tabPageRecord.Size = new System.Drawing.Size(634, 343);
             this.tabPageRecord.TabIndex = 6;
             this.tabPageRecord.Tag = "";
             this.tabPageRecord.Text = "设备运行记录";
@@ -688,7 +709,7 @@
             this.tabPageBreak.Controls.Add(this.dataGridView_break);
             this.tabPageBreak.Location = new System.Drawing.Point(4, 22);
             this.tabPageBreak.Name = "tabPageBreak";
-            this.tabPageBreak.Size = new System.Drawing.Size(646, 343);
+            this.tabPageBreak.Size = new System.Drawing.Size(634, 343);
             this.tabPageBreak.TabIndex = 7;
             this.tabPageBreak.Text = "设备状况记录";
             this.tabPageBreak.UseVisualStyleBackColor = true;
@@ -710,7 +731,7 @@
             this.tabPageIncome.Controls.Add(this.dataGridView_income);
             this.tabPageIncome.Location = new System.Drawing.Point(4, 22);
             this.tabPageIncome.Name = "tabPageIncome";
-            this.tabPageIncome.Size = new System.Drawing.Size(646, 343);
+            this.tabPageIncome.Size = new System.Drawing.Size(634, 343);
             this.tabPageIncome.TabIndex = 4;
             this.tabPageIncome.Tag = "";
             this.tabPageIncome.Text = "营业额";
@@ -748,23 +769,23 @@
             this.chart1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            chartArea12.Area3DStyle.Enable3D = true;
-            chartArea12.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
-            chartArea12.Area3DStyle.PointDepth = 75;
-            chartArea12.Area3DStyle.WallWidth = 1;
-            chartArea12.BackColor = System.Drawing.Color.Gainsboro;
-            chartArea12.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea12);
-            legend12.Name = "Legend1";
-            this.chart1.Legends.Add(legend12);
+            chartArea1.Area3DStyle.Enable3D = true;
+            chartArea1.Area3DStyle.LightStyle = System.Windows.Forms.DataVisualization.Charting.LightStyle.Realistic;
+            chartArea1.Area3DStyle.PointDepth = 75;
+            chartArea1.Area3DStyle.WallWidth = 1;
+            chartArea1.BackColor = System.Drawing.Color.Gainsboro;
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(0, 0);
             this.chart1.Name = "chart1";
-            series12.ChartArea = "ChartArea1";
-            series12.CustomProperties = "EmptyPointValue=Zero";
-            series12.Legend = "Legend1";
-            series12.Name = "营业额";
-            series12.YValuesPerPoint = 4;
-            this.chart1.Series.Add(series12);
+            series1.ChartArea = "ChartArea1";
+            series1.CustomProperties = "EmptyPointValue=Zero";
+            series1.Legend = "Legend1";
+            series1.Name = "营业额";
+            series1.YValuesPerPoint = 4;
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(634, 343);
             this.chart1.TabIndex = 6;
             this.chart1.Text = "chart1";
@@ -963,6 +984,17 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "控制命令";
             // 
+            // label_curTime
+            // 
+            this.label_curTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label_curTime.AutoSize = true;
+            this.label_curTime.Location = new System.Drawing.Point(6, 484);
+            this.label_curTime.Name = "label_curTime";
+            this.label_curTime.Size = new System.Drawing.Size(53, 12);
+            this.label_curTime.TabIndex = 20;
+            this.label_curTime.Text = "当前时间";
+            // 
             // label_comm_back
             // 
             this.label_comm_back.AutoSize = true;
@@ -981,41 +1013,10 @@
             this.label3.TabIndex = 17;
             this.label3.Text = "待发送的命令：";
             // 
-            // label_curTime
-            // 
-            this.label_curTime.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label_curTime.AutoSize = true;
-            this.label_curTime.Location = new System.Drawing.Point(6, 484);
-            this.label_curTime.Name = "label_curTime";
-            this.label_curTime.Size = new System.Drawing.Size(53, 12);
-            this.label_curTime.TabIndex = 20;
-            this.label_curTime.Text = "当前时间";
-            // 
             // timer_cur
             // 
             this.timer_cur.Interval = 1000;
             this.timer_cur.Tick += new System.EventHandler(this.timer_cur_Tick);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(75, 17);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(64, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "清发短信";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(6, 17);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(64, 23);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "清收短信";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // Form1
             // 
